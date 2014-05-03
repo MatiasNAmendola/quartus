@@ -1,0 +1,11 @@
+#ifndef CSTDDEF
+#define CSTDDEF
+
+extern "C"
+{
+	#include <stddef.h>
+}
+
+typedef decltype(nullptr) nullptr_t;
+
+#endif

@@ -1,0 +1,9 @@
+#ifndef CSTDBOOL
+#define CSTDBOOL
+
+extern "C"
+{
+	#include <stdbool.h>
+}
+
+#endif

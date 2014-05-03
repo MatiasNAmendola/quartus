@@ -1,0 +1,9 @@
+#ifndef CISO646
+#define CISO646
+
+extern "C"
+{
+	#include <iso646.h>
+}
+
+#endif

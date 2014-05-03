@@ -1,0 +1,9 @@
+#ifndef CCTYPE
+#define CCTYPE
+
+extern "C"
+{
+	#include <ctype.h>
+}
+
+#endif

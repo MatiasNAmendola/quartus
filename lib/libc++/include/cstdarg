@@ -1,0 +1,9 @@
+#ifndef CSTDARG
+#define CSTDARG
+
+extern "C"
+{
+	#include <stdarg.h>
+}
+ 
+#endif
