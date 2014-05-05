@@ -40,7 +40,7 @@ namespace hal
 				void init(  );
 
 				/**
-				  * @breif	Gets the IRQ-mask.
+				  * @brief	Gets the IRQ-mask.
 				  *
 				  * @return			IRQ-mask
 				  */
@@ -69,7 +69,7 @@ namespace hal
 				void disable( uint8_t irq );
 
 				/**
-				  * @breif	Sends the End of Interrupt signal to the PIC
+				  * @brief	Sends the End of Interrupt signal to the PIC
 				  *
 				  * @param	irq		IRQ number
 				  */
@@ -106,22 +106,22 @@ namespace hal
 				static const uint32_t	irq_limit = intr::irq_limit;
 
 				/**
-				  * @brif	The Command-port of the first PIC
+				  * @brief	The Command-port of the first PIC
 				  */
 				static const uint16_t	pic1_cmd  = 0x20;
 
 				/**
-				  * @brif	The Data-port of the first PIC
+				  * @brief	The Data-port of the first PIC
 				  */
 				static const uint16_t	pic1_data = 0x21;
 
 				/**
-				  * @brif	The Command-port of the second PIC
+				  * @brief	The Command-port of the second PIC
 				  */
 				static const uint16_t	pic2_cmd  = 0xA0;
 
 				/**
-				  * @brif	The Data-port of the second PIC
+				  * @brief	The Data-port of the second PIC
 				  */
 				static const uint16_t	pic2_data = 0xA1;
 

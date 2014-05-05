@@ -113,7 +113,7 @@ namespace hal
 				static const size_t width		= 80;
 
 				/**
-				  * @brief	Width of the tabulator ('\t')
+				  * @brief	Width of the tabulator ('\\t')
 				  */
 				static const size_t tab_width		= 8;
 
@@ -358,7 +358,7 @@ namespace hal
 				  * @param	color		Background color to set
 				  * @return			The 'video' object (*this)
 				  */
-				video &operator << ( const color::background &pColor );
+				video &operator << ( const color::background &color );
 
 
 			

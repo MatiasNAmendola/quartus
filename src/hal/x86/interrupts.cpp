@@ -11,17 +11,17 @@ static intr::handler_t ncex_handler = intr::null_handler;
 /*
 Register a handler for Interrupts
 */
-void intr::handler( uint32_t intr, intr::handler_t pHandler )
+void intr::handler( uint32_t intr, intr::handler_t handler )
 {
-	handlers[intr] = pHandler;
+	handlers[intr] = handler;
 }
 
 /*
 Handler for non critical exceptions
 */
-void intr::ncex( handler_t pHandler )
+void intr::ncex( handler_t handler )
 {
-	ncex_handler = pHandler;
+	ncex_handler = handler;
 }
 
 static const char *error_name[intr::exception_limit - intr::exception_base] =

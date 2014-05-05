@@ -51,7 +51,7 @@ namespace hal
 			  *
 			  * @param	handler		Pointer to an interrupt handler function
 			  */
-			void ncex( handler_t pHandler );
+			void ncex( handler_t handler );
 
 			/**
 			  * @brief	The exception handler
