@@ -4,7 +4,7 @@ using namespace kernel;
 
 void init( multiboot::multiboot_info *mbs, uint32_t mb_magic )
 {
-	kout << "TERTIUS " << arch_string << output::endl;
+	kout << "QUARTUS " << arch_string << output::endl;
 
 	if(mb_magic != multiboot::magic)
 	{
