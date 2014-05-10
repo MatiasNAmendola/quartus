@@ -13,11 +13,6 @@ Includes from 'multiboot'
 */
 #include "../../multiboot/include/multiboot.hpp"
 
-/*
-includes from 'kernel'
-*/
-#include "output.hpp"
-
 /**
   * @brief	The kernel namepace.
   *
@@ -26,17 +21,7 @@ includes from 'kernel'
   */
 namespace kernel
 {
-	/**
-	  * @brief	The standard-output of the kernel
-	  *
-	  *		The standard-output is defined with a function (c++ lambda-function) putting a char to 'screen' (defined in 'hal').
-	  *		If compiled with 'QEMU_DEBUG' option, the char is also send to the qemu serial port.
-	  */
-	#ifdef QEMU_DEBUG
-	output kout = output( []( char c ){ screen.putc(c); io::outb(definitions::qemu_serial, c); } );
-	#else
-	output kout = output( []( char c ){ screen.putc(c); } );
-	#endif
+	
 }
 
 /**
@@ -49,6 +34,6 @@ namespace kernel
   * @param	mb_magic	Multiboot-magicnumber (passed by bootloader; used to check if loaded by a compatible loader)
   *
   */
-extern "C" void init( multiboot::multiboot_info *mbs, uint32_t mb_magic );
+extern "C" void init( multiboot::info *mbs, uint32_t mb_magic );
 
 #endif

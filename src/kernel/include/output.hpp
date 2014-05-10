@@ -327,6 +327,8 @@ namespace kernel
 			  */
 			fmtflags_t	fmtflags_;
 	};
+
+	extern output kout;
 }
 
 #endif

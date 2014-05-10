@@ -1,8 +1,6 @@
 #include "include/pic.hpp"
 #include "include/ioports.hpp"
 
-#include "include/video.hpp"
-
 using namespace hal::x86;
 
 pic::pic(  )

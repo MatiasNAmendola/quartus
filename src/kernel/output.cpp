@@ -1,6 +1,23 @@
 #include "include/output.hpp"
 
+/*
+Includes from 'hal'
+*/
+#include "../hal/hal.hpp"
+
 using namespace kernel;
+
+/**
+  * @brief	The standard-output of the kernel
+  *
+  *		The standard-output is defined with a function (c++ lambda-function) putting a char to 'screen' (defined in 'hal').
+  *		If compiled with 'QEMU_DEBUG' option, the char is also send to the qemu serial port.
+  */
+#ifdef QEMU_DEBUG
+output kernel::kout = output( []( char c ){ screen.putc(c); io::outb(definitions::qemu_serial, c); } );
+#else
+output kernel::kout = output( []( char c ){ screen.putc(c); } );
+#endif
 
 /*
 Constructors
@@ -77,6 +94,8 @@ void output::putn( long n )
 
 	int base = 10;
 
+	size_t len = 0;
+
 	char buf[65];
 	char *p;
 
@@ -100,11 +119,17 @@ void output::putn( long n )
 		n /= base;
 
 		--p;
+		len++;
 		*p = (char)digits[d];
 	} while(n);
 
 	if(this->fmtflags_ & output::hex_)
 	{
+		while(len++ < 8)
+		{
+			*--p = '0';
+		}
+
 		*--p = 'x';
 		*--p = '0';
 	}

@@ -18,7 +18,7 @@ namespace hal
 		/**
 		  * @brief	A string, representing the architecture (rpi_a).
 		  */
-		const char *arch_string	= "rpi_a";
+		extern const char *arch_string;
 	}
 
 	/**
@@ -36,7 +36,7 @@ namespace hal
 		/**
 		  * @brief	A string, representing the architecture (rpi_b).
 		  */
-		const char *arch_string	= "rpi_b";
+		extern const char *arch_string;
 	}
 }
 

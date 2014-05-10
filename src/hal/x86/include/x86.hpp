@@ -8,6 +8,8 @@
 #include "pic.hpp"
 #include "interrupts.hpp"
 #include "video.hpp"
+#include "memory.hpp"
+#include "pmm.hpp"
 
 namespace hal
 {
@@ -22,7 +24,7 @@ namespace hal
 		/**
 		  * @brief	A string, representing the architecture (x86).
 		  */
-		const char *arch_string	= "x86";
+		extern const char *arch_string;
 	}
 }
 

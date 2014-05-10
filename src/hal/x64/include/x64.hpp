@@ -16,7 +16,7 @@ namespace hal
 		/**
 		  * @brief	A string, representing the architecture (x64).
 		  */
-		const char *arch_string	= "x64";
+		extern const char *arch_string;
 	}
 }
 

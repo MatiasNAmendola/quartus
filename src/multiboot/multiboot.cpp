@@ -1,6 +1,6 @@
 #include "include/multiboot.hpp"
 
-multiboot::error multiboot::check_mbs( multiboot::multiboot_info *mbs )
+multiboot::error multiboot::check_mbs( multiboot::info *mbs )
 {
 	if(!mbs)
 	{

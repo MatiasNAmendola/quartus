@@ -16,6 +16,11 @@ namespace multiboot
 	enum error
 	{
 		/**
+		  * @brief	Indicates that the checked multiboot-structure is ok.
+		  */
+		mbs_check_ok			= 0x00,
+		
+		/**
 		  * @brief	Indicates that the checked data is not a valid multiboot-structure.
 		  */
 		no_mbs 				= 0x01,
@@ -28,12 +33,7 @@ namespace multiboot
 		/**
 		  * @brief	Indicates that the checked multiboot-structure does not contain a valid pointer to a memory map.
 		  */
-		no_mbs_mmap_addr 		= 0x03,
-
-		/**
-		  * @brief	Indicates that the checked multiboot-structure is ok.
-		  */
-		mbs_check_ok			= 0x00
+		no_mbs_mmap_addr 		= 0x03
 	};
 
 	/**
@@ -163,7 +163,7 @@ namespace multiboot
 		  * @brief	Contains the physical address of an apm table.
 		  */
 		uint32_t apm_table;
-	} multiboot_info;
+	} info;
 
 	/**
 	  * @brief	The memory-map-structure
@@ -194,7 +194,7 @@ namespace multiboot
 		  */
 		uint32_t type;
 
-	} multiboot_mmap;
+	} mmap;
 
 	/**
 	  * @brief	The module-structure
@@ -222,7 +222,7 @@ namespace multiboot
 		  * @brief	Reserved; ignored
 		  */
 		uint32_t reserved;
-	} multiboot_mods;
+	} mods;
 
 	/**
 	  * @brief	The drive-structure
@@ -265,7 +265,7 @@ namespace multiboot
 		/**
 		  * @todo	drive ports
 		  */	
-	} multiboot_drives;
+	} drives;
 
 	/**
 	  * @brief	Checks the given multiboot-structure for validity.
@@ -277,7 +277,7 @@ namespace multiboot
 	  * @param	mbs		Pointer to the structure to be checked
 	  * @return			Returns the result of the check
 	  */
-	error check_mbs( multiboot_info *mbs );
+	error check_mbs( info *mbs );
 }
 
 #endif
