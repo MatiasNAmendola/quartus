@@ -1,0 +1,9 @@
+CC		= gcc -std=c11
+CPP 		= g++ -std=c++11
+LD 		= ld
+
+ASFLAGS 	= -m32
+CCFLAGS 	= -m32 -nostdinc -nostdlib -fno-builtin -fno-leading-underscore -Wall -Wextra -pedantic-errors -g -fno-stack-protector
+CPPFLAGS 	= -nostdinc++ -fno-use-cxa-atexit -fno-rtti -fno-exceptions -fno-threadsafe-statics
+LDFLAGS 	= -melf_i386
+

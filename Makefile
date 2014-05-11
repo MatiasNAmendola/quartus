@@ -6,27 +6,37 @@ default: all
 .PHONY: clean
 .PHONY: doc
 
+quartus-x86:
+	make --no-print-directory -f ./config/arch_x86/Makefile
+
+quartus-x64:
+	make --no-print-directory -f ./config/arch_x64/Makefile
+
+quartus-rpi:
+	make --no-print-directory -f ./config/arch_rpi/Makefile
+
 doc: Doxyfile
-	rm -rf doc
-	mkdir doc
+	@rm -rf doc
+	@mkdir doc
 	doxygen Doxyfile
 
-quartus: $(OBJS)
-	$(LD) $(LDFLAGS) -o $(BUILDDIR)/$@ $^
-
 all:
-	make --no-print-directory quartus
+	make --no-print-directory quartus-x86
+	make --no-print-directory quartus-x64
+	make --no-print-directory quartus-rpi
+
 	make --no-print-directory doc
 
-qemu-test:
-	qemu-system-i386 -cpu pentium3 -k de -m 1024 -serial stdio -name quartus -kernel $(BUILDDIR)/quartus
+qemu-test-x86:
+	make --no-print-directory -f ./config/arch_x86/Makefile test
 
-%.o: %.c 
-	$(CC) $(CCFLAGS) $(INCLUDE) -c -o $@ $^
-%.o: %.cpp 
-	$(CPP) $(CCFLAGS) $(CPPFLAGS) $(INCLUDE) -c -o $@ $^
-%.o: %.S
-	$(CC) $(ASFLAGS) -c -o $@ $^
+qemu-test-x64:
+	make --no-print-directory -f ./config/arch_x64/Makefile test
+
+qemu-test-rpi:
+	make --no-print-directory -f ./config/arch_rpi/Makefile test
 
 clean:
-	rm $(OBJS) 
+	make --no-print-directory -f ./config/arch_x86/Makefile clean
+	make --no-print-directory -f ./config/arch_x64/Makefile clean
+	make --no-print-directory -f ./config/arch_rpi/Makefile clean

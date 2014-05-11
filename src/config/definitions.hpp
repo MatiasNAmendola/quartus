@@ -1,8 +1,6 @@
 #ifndef DEFINITIONS_HPP
 #define DEFINITIONS_HPP
 
-#define 			arch_x86
-
 #define				QEMU_DEBUG
 
 #define PACKED			__attribute__((packed))
