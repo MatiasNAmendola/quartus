@@ -2,6 +2,7 @@
 
 #include "include/ioports.hpp"
 #include "include/video.hpp"
+#include "include/x86.hpp"
 
 using namespace hal::x86;
 
@@ -121,7 +122,7 @@ cpu::cpu_state *handle_exception( cpu::cpu_state *cpu )
 			screen << color::red << "\tEXCEPTION!\t    " << error_name[cpu->intr] << "   " << error_type[cpu->intr] << video::endl;
 	
 			screen << color::white << video::endl << "################################################################################" << video::endl;
-			screen << color::brown << video::endl << "                       kernel++  #  " << __DATE__ << "  " << __TIME__ << video::endl;
+			screen << color::brown << video::endl << "                     QUARTUS " << arch_string << "  # " << __DATE__ << "  " << __TIME__ << video::endl;
 			screen << color::white << video::endl << "################################################################################" << video::endl;
 	
 			cpu::dump(cpu);
@@ -137,7 +138,7 @@ cpu::cpu_state *handle_exception( cpu::cpu_state *cpu )
 			screen << color::red << "\tUNKNOWN ERROR!\t" << no_error_name << "   " << no_error_type << video::endl;
 	
 			screen << color::white << video::endl << "################################################################################" << video::endl;
-			screen << color::brown << video::endl << "                       kernel++  #  " << __DATE__ << "  " << __TIME__ << video::endl;
+			screen << color::brown << video::endl << "                     QUARTUS " << arch_string << "  # " << __DATE__ << "  " << __TIME__ << video::endl;
 			screen << color::white << video::endl << "################################################################################" << video::endl;
 	
 			cpu::dump(cpu);

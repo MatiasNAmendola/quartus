@@ -99,9 +99,9 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 		break;
 	}
 
-	
-
 	intr::enable();
+
+	asm("int $0x0");
 		
 	while(1);
 }
