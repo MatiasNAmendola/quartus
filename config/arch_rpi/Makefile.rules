@@ -1,9 +1,8 @@
-CC		= gcc -std=c11
-CPP 		= g++ -std=c++11
-LD 		= ld
+CC		= arm-linux-gnueabi-gcc -std=c11
+CPP 		= arm-linux-gnueabi-g++ -std=c++11
+LD 		= arm-linux-gnueabi-ld
 
-ASFLAGS 	= 
-CCFLAGS 	= -nostdinc -nostdlib -fno-builtin -fno-leading-underscore -Wall -Wextra -pedantic-errors -g -fno-stack-protector
+ASFLAGS 	= -mcpu=arm1176jzf-s
+CCFLAGS 	= -mcpu=arm1176jzf-s -fpic -O2 -nostdinc -nostdlib -fno-builtin -fno-leading-underscore -Wall -Wextra -pedantic-errors -g -fno-stack-protector
 CPPFLAGS 	= -nostdinc++ -fno-use-cxa-atexit -fno-rtti -fno-exceptions -fno-threadsafe-statics
-LDFLAGS 	= 
-
+LDFLAGS 	= -L libgcc

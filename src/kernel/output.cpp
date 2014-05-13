@@ -10,13 +10,15 @@ using namespace kernel;
 /**
   * @brief	The standard-output of the kernel
   *
-  *		The standard-output is defined with a function (c++ lambda-function) putting a char to 'screen' (defined in 'hal').
+  *		The standard-output is defined with a function (c++ lambda-function) putting a char to 'screen' or 'seri' (defined in 'hal').
   *		If compiled with 'QEMU_DEBUG' option, the char is also send to the qemu serial port.
   */
-#ifdef QEMU_DEBUG
+#if defined(OUTPUT_SCREEN) && defined(QEMU_DEBUG) 
 output kernel::kout = output( []( char c ){ screen.putc(c); io::outb(definitions::qemu_serial, c); } );
-#else
+#elif defined(OUTPUT_SCREEN)
 output kernel::kout = output( []( char c ){ screen.putc(c); } );
+#elif defined(OUTPUT_SERIAL)
+output kernel::kout = output( []( char c ){ seri.putc(c); } );
 #endif
 
 /*

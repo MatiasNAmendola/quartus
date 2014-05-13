@@ -1,10 +1,16 @@
 #ifndef RPI_HPP
 #define RPI_HPP
 
+#include "serial.hpp"
+#include "memory.hpp"
+#include "mmio.hpp"
+#include "gpio.hpp"
+#include "delay.hpp"
+
 namespace hal
 {
 	/**
-	  * @brief	Namespace of the rpi_a architecture. (Raspberry Pi Model A)
+	  * @brief	Namespace of the rpi architecture. (Raspberry Pi Model)
 	  *
 	  *		This is not really a architecture, its a whole hardware platform. The Architecture is ARMv6.
 	  *		The Raspberry Pi is a credit-card-sized single-board computer.
@@ -13,28 +19,10 @@ namespace hal
 	  * 
 	  * @todo	Implement
 	  */
-	namespace rpi_a
+	namespace rpi
 	{
 		/**
-		  * @brief	A string, representing the architecture (rpi_a).
-		  */
-		extern const char *arch_string;
-	}
-
-	/**
-	  * @brief	Namespace of the rpi_b architecture. (Raspberry Pi Model B)
-	  *
-	  *		This is not really a architecture, its a whole hardware platform. The Architecture is ARMv6.
-	  *		The Raspberry Pi is a credit-card-sized single-board computer.
-	  *		This namespace contains all rpi specific stuff.
-	  *		e.g. Interrupt-handling, address-space size, rpi specific Hardware and structures
-	  *
-	  * @todo	Implement
-	  */
-	namespace rpi_b
-	{
-		/**
-		  * @brief	A string, representing the architecture (rpi_b).
+		  * @brief	A string, representing the architecture (rpi).
 		  */
 		extern const char *arch_string;
 	}

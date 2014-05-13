@@ -10,14 +10,14 @@ include $(BASEDIR)/config/arch_rpi/Makefile.rules
 
 .PHONY: clean
 
-quartus-rpi:
-	@echo "\033[0;31mSorry, Raspberry Pi support is not implemented yet.\033[0m"
+quartus-rpi: $(OBJS)
+	$(LD) $(LDFLAGS) $(LINK) -o $(BUILDDIR)/$@ $^
 
 clean:
-	
+	rm $(OBJS)
 
 test:
-	@echo "\033[0;31mSorry, Raspberry Pi support is not implemented yet.\033[0m"
+	qemu-system-arm -cpu arm1176 -m 256 -M versatilepb -no-reboot -name quartus-rpi -serial stdio -kernel $(BUILDDIR)/quartus-rpi
 
 %.o: %.c 
 	$(CC) $(PREPROC) $(CCFLAGS) $(INCL) -c -o $@ $^

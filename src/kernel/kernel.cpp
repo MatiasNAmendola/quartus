@@ -11,6 +11,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 {
 	kout << "QUARTUS " << arch_string << output::endl;
 
+	#ifdef ARCH_USE_MULTIBOOT
 	if(mb_magic != multiboot::magic)
 	{
 		kout << "Error: no multiboot bootloader!" << output::endl;
@@ -25,12 +26,12 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 		break;
 
 		case multiboot::error::no_mbs_mods_addr:
-			kout << output::endl << "No MODS_ADDR! (" << output::hex << err << ")" << output::endl;
+			kout << output::endl << "No module structure! (" << output::hex << err << ")" << output::endl;
 			cpu::halt();
 		break;
 		
 		case multiboot::error::no_mbs_mmap_addr:
-			kout << output::endl << "No MMAP_ADDR! (" << output::hex << err << ")" << output::endl;
+			kout << output::endl << "No memory map! (" << output::hex << err << ")" << output::endl;
 			cpu::halt();
 		break;
 		
@@ -52,7 +53,9 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	kout << output::endl << "mmap_length:          " << output::dec << mbs->mmap_length;
 	kout << output::endl << "mmap_addr:            " << output::hex << mbs->mmap_addr;
 	kout << output::endl << "boot_loader_name:     " << (const char*)mbs->boot_loader_name << output::endl;
+	#endif
 
+	#if defined(ARCH_X86) || defined(ARCH_X64)
 	/*
 	Initialise the GDT
 	*/
@@ -66,16 +69,22 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	idt &idt = idt::instance();
 	idt.init();
 	idt.load();
+	#elif defined(ARCH_RPI)
+	/*
+	TODO
+	*/
+	#endif
 
+	#if defined(ARCH_X86) || defined(ARCH_X64)
 	/*
 	Initialise the PIC
 	*/
 	pic &pic = pic::instance();
 	pic.init();
-/*
+	/*
 	pic.handler(0, []( cpu::cpu_state *cpu ) { static int counter; kout << "TIMER " << output::dec << counter++ << output::endl; return cpu; });
 	pic.enable(0);
-*/
+	*/
 
 	/*
 	Initialise the Physical Memory Manager
@@ -100,8 +109,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	}
 
 	intr::enable();
-
-	asm("int $0x0");
+	#endif
 		
 	while(1);
 }

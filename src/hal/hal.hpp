@@ -3,20 +3,24 @@
 
 #include <definitions.hpp>
 
-#ifdef arch_x86
+#ifdef ARCH_X86
 
 #include "x86/include/x86.hpp"
 using namespace hal::x86;
 
-#elif arch_x64
+#elif ARCH_X64
 
 #include "x64/include/x64.hpp"
 using namespace hal::x64;
 
-#elif arch_rpi
+#elif ARCH_RPI
 
 #include "rpi/include/rpi.hpp"
 using namespace hal::rpi;
+
+#else
+
+#error "Unknown architecture!"
 
 #endif
 

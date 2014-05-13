@@ -15,7 +15,7 @@
 
 #define TMP_MAX		25
 
-typedef __SIZE_TYPE__  	size_t;
+typedef __SIZE_TYPE__	size_t;
 
 
 int snprintf( char *s, size_t n, const char *format, ... );
