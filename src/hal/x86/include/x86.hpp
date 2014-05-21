@@ -10,6 +10,7 @@
 #include "video.hpp"
 #include "memory.hpp"
 #include "pmm.hpp"
+#include "mapper.hpp"
 
 namespace hal
 {

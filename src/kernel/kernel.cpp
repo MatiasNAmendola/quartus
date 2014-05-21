@@ -81,10 +81,10 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	*/
 	pic &pic = pic::instance();
 	pic.init();
-	/*
+	
 	pic.handler(0, []( cpu::cpu_state *cpu ) { static int counter; kout << "TIMER " << output::dec << counter++ << output::endl; return cpu; });
 	pic.enable(0);
-	*/
+	
 
 	/*
 	Initialise the Physical Memory Manager
@@ -107,6 +107,9 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 			kout << output::endl << "pmm init OK! (" << output::hex << err << ")" << output::endl;
 		break;
 	}
+
+	context kernel_context = context();
+	kernel_context.activate();
 
 	intr::enable();
 	#endif

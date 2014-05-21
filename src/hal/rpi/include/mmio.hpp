@@ -26,7 +26,7 @@ namespace hal
 			/**
 			  * @brief	Reads 32-bit integer from an MMIO-register.
 			  *
-			  * @parm	reg		MMIO-register to read
+			  * @param	reg		MMIO-register to read
 			  * @return			Read Data
 			  */
 			uint32_t read( uint32_t reg );

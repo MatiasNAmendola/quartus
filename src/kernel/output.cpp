@@ -94,7 +94,7 @@ void output::putn( long n )
 {
 	static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz"; 
 
-	int base = 10;
+	unsigned long base = 10;
 
 	size_t len = 0;
 
@@ -116,22 +116,17 @@ void output::putn( long n )
 
 	do 
 	{
-		long long d = n % base;
+		unsigned long d = n % base;
 
 		n /= base;
 
 		--p;
 		len++;
 		*p = (char)digits[d];
-	} while(n);
+	} while((n || ((this->fmtflags_ & output::hex_) && len < 8)) && p >= buf);
 
 	if(this->fmtflags_ & output::hex_)
 	{
-		while(len++ < 8)
-		{
-			*--p = '0';
-		}
-
 		*--p = 'x';
 		*--p = '0';
 	}

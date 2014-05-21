@@ -167,9 +167,9 @@ void video::putc( char c )
 
 void video::putn( long n )
 {
-	static const char digits[] = "0123456789abcdefghijklmnopqrstuvwxyz"; 
+	static const char digits[4096] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
-	int base = 10;
+	unsigned long base = 10;
 
 	int fwidth = this->field_width;
 
@@ -193,24 +193,18 @@ void video::putn( long n )
 
 	do 
 	{
-		long d = n % base;
+		unsigned long d = n % base;
 
 		n /= base;
 
 		--p;
 		--fwidth;
-		len++;
+		++len;
 		*p = (char)digits[d];
-	} while(n);
+	} while((n || ((this->fmtflags_ & video::hex_) && len < 8)) && p >= buf);
 
 	if(this->fmtflags_ & video::hex_)
 	{
-		while(len++ < 8)
-		{
-			*--p = '0';
-			--fwidth;
-		}
-
 		*--p = 'x';
 		--fwidth;
 		*--p = '0';
