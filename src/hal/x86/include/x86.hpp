@@ -11,6 +11,7 @@
 #include "memory.hpp"
 #include "pmm.hpp"
 #include "mapper.hpp"
+#include "vmm.hpp"
 
 namespace hal
 {

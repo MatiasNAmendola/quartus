@@ -8,7 +8,6 @@
 #include "memory.hpp"
 #include "pmm.hpp"
 
-//#define PNUMBER( virt_addr )	virt_addr / 4096							
 #define PD_INDEX( virt_addr )	virt_addr / 4096 / 1024							
 #define PT_INDEX( virt_addr )	virt_addr / 4096 % 1024
 
@@ -16,6 +15,9 @@ namespace hal
 {
 	namespace x86
 	{	
+		/**
+		  * @brief	Class describing an x86 virtual memory context (paging)
+		  */
 		class context
 		{
 			public:
@@ -29,9 +31,8 @@ namespace hal
 				  */
 				typedef uint32_t	pagetab_t;
 
-			private:
 
-			public:
+
 				/**
 				  * @brief	The constructor
 				  */
@@ -42,13 +43,10 @@ namespace hal
 				  */
 				~context(  );
 
-
-
 				/**
 				  * @brief	Activates this context; Loads the page directory to cr3.
 				  */
 				void activate(  );
-
 
 				/**
 				  * @brief	Maps a virtual address to a physical
@@ -88,7 +86,6 @@ namespace hal
 				  */
 				bool umap( uintptr_t virt, size_t n );
 
-
 				/**
 				  * @brief	Gets the physical address the virtual address is mapped to.
 				  *
@@ -120,14 +117,14 @@ namespace hal
 
 
 				/**
-				  * @brief	The page is writable.
-				  */
-				static const uint32_t page_write	= 0x01;
-
-				/**
 				  * @brief	The page is present.
 				  */
-				static const uint32_t page_present 	= 0x02;
+				static const uint32_t page_present 	= 0x01;
+
+				/**
+				  * @brief	The page is writable.
+				  */
+				static const uint32_t page_write	= 0x02;
 
 				/**
 				  * @brief	The page is accessible for user space.
@@ -173,12 +170,12 @@ namespace hal
 				/**
 				  * @brief 	Used to map an other page directory temporarily.
 				  */
-				static const uintptr_t tmp_pagedir_mapping = 0x00001000;
+				static const uintptr_t tmp_pagedir_mapping = 0xFFBFE000;
 
 				/**
 				  * @brief 	Used to map an other page table temporarily.
 				  */
-				static const uintptr_t tmp_pagetab_mapping = 0x00002000;
+				static const uintptr_t tmp_pagetab_mapping = 0xFFBFF000;
 		};
 
 		/**

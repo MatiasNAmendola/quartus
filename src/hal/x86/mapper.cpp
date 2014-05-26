@@ -25,7 +25,7 @@ context::context(  )
 
 		pd[PD_INDEX(context::pagedir_mapping)] = (pagetab_t)this->pagedir | context::page_present | context::page_write;
 
-		this->map(0x0, 0x0, context::page_present | context::page_write, 1024);
+		this->map(0x1000, 0x1000, context::page_present | context::page_write, 1023);
 	}
 	else
 	{
@@ -39,7 +39,7 @@ context::context(  )
 
 		this->pagedir[PD_INDEX(context::pagedir_mapping)] = (pagetab_t)this->pagedir | context::page_present | context::page_write;
 
-		this->map(0x0, 0x0, context::page_present | context::page_write, 1024);
+		this->map(0x1000, 0x1000, context::page_present | context::page_write, 1023);
 	}
 }
 
@@ -110,7 +110,7 @@ void context::activate(  )
 		uint32_t cr0;
 
 		asm volatile("mov %%cr0, %0" :  "=r" (cr0));
-    		asm volatile("mov %0, %%cr0" : : "r" (cr0 | (1 << 31)));
+    		asm volatile("mov %0, %%cr0" : : "r" (cr0 | (1 << 31) | (1 << 16)));
 
 		mapper::paging_activated = true;
 	}
@@ -155,13 +155,14 @@ bool context::map( uintptr_t virt, uintptr_t phys, uint32_t flags )
 					pt[index] = 0;
 				}
 			}
+
+			pt[PT_INDEX(virt)] = phys | flags;
 		}
 		else
 		{
 			mapper::current_context->map(context::tmp_pagedir_mapping, (uintptr_t)pd, context::page_present | context::page_write);
 
 			pd = (pagedir_t*)context::tmp_pagedir_mapping;
-
 
 			if(pd[PD_INDEX(virt)] & context::page_present)
 			{
@@ -364,7 +365,6 @@ uint32_t context::flags( uintptr_t virt )
 			mapper::current_context->map(context::tmp_pagedir_mapping, (uintptr_t)pd, context::page_present | context::page_write);
 
 			pd = (pagedir_t*)context::tmp_pagedir_mapping;
-
 
 			if(pd[PD_INDEX(virt)] & context::page_present)
 			{

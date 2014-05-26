@@ -120,7 +120,7 @@ namespace hal
 			          * @brief	Checks one page of memory
 			          *
 			          * @param	addr		The address of the page to be checked
-			          * @return			true if the page is unused, flase otherwise
+			          * @return			true if the page is unused, false otherwise
 			          */
 			        bool check( uintptr_t addr );
 
@@ -129,11 +129,17 @@ namespace hal
 			          *
 			          * @param	addr		The address of the first page to be checked
 			          * @param	n		Number of pages to check
-			          * @return			true if all pages are unused, flase otherwise
+			          * @return			true if all pages are unused, false otherwise
 			          */
 			        bool check( uintptr_t addr, size_t n );
 
-
+				/**
+				  * @brief	Gets information about free/used pages
+				  *
+				  * @return			Memory info structure containig size of free and used memory
+				  */
+				meminfo_t info(  );
+				
 
 			        /**
 			          * @brief	Flag used to allocate memory suitable for Direct Memory Access
@@ -144,6 +150,11 @@ namespace hal
 			          * @brief	Size of the pmm-bitmap
 			          */
 			        static const uint32_t bitmap_size 	= memory::memory_size_kib / memory::page_size_kib / 32;
+
+				/**
+				  * @brief	Total bytes of memory available
+				  */
+				size_t total_mem;
 
 		        private:
 			        /**

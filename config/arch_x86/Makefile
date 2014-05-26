@@ -18,7 +18,7 @@ clean:
 	rm $(OBJS)
 
 test:
-	qemu-system-i386 -cpu pentium3 -D $(LOGDIR)/test-x86.log -d int -k de -m 1024 -serial stdio -name quartus-x86 -kernel $(BUILDDIR)/quartus-x86
+	qemu-system-i386 -cpu pentium3 -D $(LOGDIR)/test-x86.log -d int -k de -m 1024 -serial stdio -name quartus-x86 -kernel $(BUILDDIR)/quartus-x86 -initrd $(BUILDDIR)/initrd
 
 %.o: %.c 
 	$(CC) $(PREPROC) $(CCFLAGS) $(INCL) -c -o $@ $^

@@ -21,7 +21,7 @@ Includes from 'multiboot'
   */
 namespace kernel
 {
-	
+	vmm memmgr;
 }
 
 /**

@@ -5,6 +5,8 @@
 #include <cstddef>
 #include <cstdbool>
 
+#define align4k(addr)	((addr) & (~0xFFF))
+
 extern const void *kernel_start;
 extern const void *kernel_end;
 
@@ -80,6 +82,11 @@ namespace hal
 			  * @brief	Last address of the kernel
 			  */
 			const uintptr_t kernel_limit	= (uintptr_t)&kernel_end;
+
+			/**
+			  * @brief	The video memory.
+			  */
+			const uintptr_t videomem	= 0xB8000;
 		}
 	}
 }

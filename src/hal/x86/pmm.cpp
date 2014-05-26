@@ -24,7 +24,7 @@ pmm::error pmm::init( multiboot::info *mbs )
 
 	for(size_t x = 0; x < pmm::bitmap_size; x++)
 	{
-		this->bitmap[x] = 0xFFFFFFFF;
+		this->bitmap[x] = 0x00000000;
 	} 
 
 
@@ -35,19 +35,21 @@ pmm::error pmm::init( multiboot::info *mbs )
 			uintptr_t addr 		= mmap->base;
 			uintptr_t addr_end 	= mmap->base + mmap->length;
 
-			for(; addr < addr_end; addr += 0x1000)
+			for(; addr < addr_end; addr += memory::page_size_byte)
 			{
 				this->free(addr);		
 			}
 		}
 	}
 
+	this->total_mem = (mbs->mem_lower + mbs->mem_upper) * 1024;
+
 	if(!memory::kernel_base || !memory::kernel_limit)
 	{
 		return pmm::error::no_kernel_addr;
 	}
 
-	for(uintptr_t addr = memory::kernel_base; addr < memory::kernel_limit; addr += 0x1000)
+	for(uintptr_t addr = memory::kernel_base; addr < memory::kernel_limit; addr += memory::page_size_byte)
 	{
 		clear_bit(this->bitmap[bitmap_px(addr)], bitmap_py(addr));
 	}
@@ -65,7 +67,7 @@ pmm::error pmm::init( multiboot::info *mbs )
 
 uintptr_t pmm::alloc(  )
 {
-	if(fast_access)
+	if(this->fast_access)
 	{
 		uintptr_t addr = fast_access;
 
@@ -125,11 +127,11 @@ uintptr_t pmm::alloc( size_t n )
 
 					if(counter >= n)
 					{
-						uintptr_t addr = addr(x, y) - (n - 1) * 4096;
+						uintptr_t addr = addr(x, y) - (n - 1) * memory::page_size_byte;
 
 						for(size_t i = 0; i < n; i++)
 						{
-							clear_bit(this->bitmap[bitmap_px((addr + i * 4096))], bitmap_py((addr + i * 4096)));
+							clear_bit(this->bitmap[bitmap_px((addr + i * memory::page_size_byte))], bitmap_py((addr + i * memory::page_size_byte)));
 						}
 
 						return addr;
@@ -163,7 +165,7 @@ uintptr_t pmm::alloc( size_t n, uint32_t flags )
 					{
 						return 0x0;
 					}
-					else if((/*x >= bitmap_px(memory::isa_dma_base) &&*/ x <= bitmap_px(memory::isa_dma_limit)) && (x == bitmap_px(memory::isa_dma_base) && y >= bitmap_py(memory::isa_dma_base)))
+					else if((/*x >= bitmap_px(memory::isa_dma_base) &&*/ x <= bitmap_px(memory::isa_dma_limit)) && ((x == bitmap_px(memory::isa_dma_base) && y >= bitmap_py(memory::isa_dma_base)) || x > bitmap_px(memory::isa_dma_base)))
 					{
 						if(this->bitmap[x] & (1 << y))
 						{
@@ -171,11 +173,11 @@ uintptr_t pmm::alloc( size_t n, uint32_t flags )
 
 							if(counter >= n)
 							{
-								uintptr_t addr = addr(x, y) - (n - 1) * 4096;
+								uintptr_t addr = addr(x, y) - (n - 1) * memory::page_size_byte;
 
 								for(size_t i = 0; i < n; i++)
 								{
-									clear_bit(this->bitmap[bitmap_px((addr + i * 4096))], bitmap_py((addr + i * 4096)));
+									clear_bit(this->bitmap[bitmap_px((addr + i * memory::page_size_byte))], bitmap_py((addr + i * memory::page_size_byte)));
 								}
 
 								return addr;
@@ -211,7 +213,7 @@ void pmm::free( uintptr_t addr, size_t n )
 	{
 		this->free(addr);
 		
-		addr += 0x1000;
+		addr += memory::page_size_byte;
 	}
 }
 
@@ -229,9 +231,34 @@ bool pmm::check( uintptr_t addr, size_t n )
 			return false;
 		}
 
-		addr += 0x1000;
+		addr += memory::page_size_byte;
 	}
 
 	return true;
 }
 
+pmm::meminfo_t pmm::info(  )
+{
+	static pmm::meminfo_t meminfo;
+
+	size_t free_mem = 0;
+
+	for(size_t x = 0; x < pmm::bitmap_size; x++)
+	{
+		if(this->bitmap[x])
+		{
+			for(size_t y = 0; y < 32; y++)
+			{
+				if(this->bitmap[x] & (1 << y))
+				{
+					free_mem += memory::page_size_byte;
+				}
+			}
+		}
+	}
+
+	meminfo.free = free_mem;
+	meminfo.used = this->total_mem - free_mem;
+
+	return meminfo;
+}

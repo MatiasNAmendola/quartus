@@ -75,16 +75,15 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	*/
 	#endif
 
-	#if defined(ARCH_X86) || defined(ARCH_X64)
 	/*
 	Initialise the PIC
 	*/
 	pic &pic = pic::instance();
 	pic.init();
-	
+	/*
 	pic.handler(0, []( cpu::cpu_state *cpu ) { static int counter; kout << "TIMER " << output::dec << counter++ << output::endl; return cpu; });
 	pic.enable(0);
-	
+	*/
 
 	/*
 	Initialise the Physical Memory Manager
@@ -108,11 +107,55 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 		break;
 	}
 
+	/*
+	Create virtual memory context for the kernel
+	*/
 	context kernel_context = context();
+
+	/*
+	Initialise the Virtual Memory Manager
+	*/
+	switch(vmm::error err = memmgr.init(&kernel_context, vmm::kernel_space_base, vmm::kernel_space_limit))
+	{
+		case vmm::error::no_kernel_addr:
+			kout << output::endl << "No kernel address! (" << output::hex << err << ")" << output::endl;
+			cpu::halt();
+		break;
+
+		default:
+			kout << output::endl << "vmm init OK! (" << output::hex << err << ")" << output::endl;
+		break;
+	}
+
+	/*
+	Video-memory mapping
+	*/
+	memmgr.map(memory::videomem, memory::videomem, vmm::present | vmm::write);
+
+	/*
+	Multibootinformation mapping
+	*/
+	memmgr.map(align4k((uintptr_t)mbs), align4k((uintptr_t)mbs), vmm::present);
+	memmgr.map(align4k((uintptr_t)mbs->cmdline), align4k((uintptr_t)mbs->cmdline), vmm::present);
+	memmgr.map(align4k((uintptr_t)mbs->boot_loader_name), align4k((uintptr_t)mbs->boot_loader_name), vmm::present);
+	memmgr.map(align4k((uintptr_t)mbs->mods_addr), align4k((uintptr_t)mbs->mods_addr), vmm::present, ((sizeof(multiboot::mods) * mbs->mods_count + 4095) / 4096));
+
+	multiboot::mods *mods = (multiboot::mods*)mbs->mods_addr;
+
+	for(size_t index = 0; index < mbs->mods_count; index++)
+	{
+		for(uintptr_t addr = mods[index].mod_start; addr < mods[index].mod_end; addr += memory::page_size_byte)
+		{
+			memmgr.map(addr, addr, vmm::present);
+		}
+	}
+
+	/*
+	Activate the kernel virtual-memory context
+	*/
 	kernel_context.activate();
 
 	intr::enable();
-	#endif
 		
 	while(1);
 }

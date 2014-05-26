@@ -406,7 +406,7 @@ namespace hal
 				/**
 				  * @brief	Pointer to the video-memory
 				  */
-				uint8_t 	*videomem = (uint8_t*)0xb8000;
+				uint8_t 	*videomem = (uint8_t*)0xB8000;
 
 				/**
 				  * @brief	The color used to print characters
