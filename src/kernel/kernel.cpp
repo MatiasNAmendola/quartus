@@ -4,6 +4,8 @@
 includes from 'kernel'
 */
 #include "include/output.hpp"
+#include "include/heap.hpp"
+#include "include/new.hpp"
 
 using namespace kernel;
 
@@ -115,7 +117,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	/*
 	Initialise the Virtual Memory Manager
 	*/
-	switch(vmm::error err = memmgr.init(&kernel_context, vmm::kernel_space_base, vmm::kernel_space_limit))
+	switch(vmm::error err = vmmgr.init(&kernel_context, vmm::kernel_space_base, vmm::kernel_space_limit))
 	{
 		case vmm::error::no_kernel_addr:
 			kout << output::endl << "No kernel address! (" << output::hex << err << ")" << output::endl;
@@ -130,15 +132,15 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	/*
 	Video-memory mapping
 	*/
-	memmgr.map(memory::videomem, memory::videomem, vmm::present | vmm::write);
+	vmmgr.map(memory::videomem, memory::videomem, vmm::present | vmm::write);
 
 	/*
 	Multibootinformation mapping
 	*/
-	memmgr.map(align4k((uintptr_t)mbs), align4k((uintptr_t)mbs), vmm::present);
-	memmgr.map(align4k((uintptr_t)mbs->cmdline), align4k((uintptr_t)mbs->cmdline), vmm::present);
-	memmgr.map(align4k((uintptr_t)mbs->boot_loader_name), align4k((uintptr_t)mbs->boot_loader_name), vmm::present);
-	memmgr.map(align4k((uintptr_t)mbs->mods_addr), align4k((uintptr_t)mbs->mods_addr), vmm::present, ((sizeof(multiboot::mods) * mbs->mods_count + 4095) / 4096));
+	vmmgr.map(align4k((uintptr_t)mbs), align4k((uintptr_t)mbs), vmm::present);
+	vmmgr.map(align4k((uintptr_t)mbs->cmdline), align4k((uintptr_t)mbs->cmdline), vmm::present);
+	vmmgr.map(align4k((uintptr_t)mbs->boot_loader_name), align4k((uintptr_t)mbs->boot_loader_name), vmm::present);
+	vmmgr.map(align4k((uintptr_t)mbs->mods_addr), align4k((uintptr_t)mbs->mods_addr), vmm::present, ((sizeof(multiboot::mods) * mbs->mods_count + 4095) / 4096));
 
 	multiboot::mods *mods = (multiboot::mods*)mbs->mods_addr;
 
@@ -146,7 +148,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	{
 		for(uintptr_t addr = mods[index].mod_start; addr < mods[index].mod_end; addr += memory::page_size_byte)
 		{
-			memmgr.map(addr, addr, vmm::present);
+			vmmgr.map(addr, addr, vmm::present);
 		}
 	}
 
@@ -155,7 +157,31 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	*/
 	kernel_context.activate();
 
+	/*
+	Testing the kernel hep
+	*/
+	kout << output::endl << "Testing the heap..." << output::endl;
+
+	void *block_a, *block_b, *block_c;
+
+	block_a = malloc(42);
+	block_b = malloc(1235);
+	kout << "block a " << block_a << " (  42 Byte)" << output::endl;
+	kout << "block b " << block_b << " (1235 Byte)" << output::endl;	
+
+	free(block_a);
+	kout << "block a freed" << output::endl;
+
+	free(block_b);
+	kout << "block b freed" << output::endl;
+	
+	block_c = malloc(1024);	
+	kout << "block c " << block_c << " (1024 Byte)" << output::endl;	
+
+	free(block_c);
+	kout << "block c freed" << output::endl;
+
 	intr::enable();
-		
+
 	while(1);
 }

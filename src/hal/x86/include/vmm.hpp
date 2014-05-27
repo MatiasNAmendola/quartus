@@ -166,17 +166,7 @@ namespace hal
 				/**
 				  * @brief	Last address of the kernel-space
 				  */
-				static const uintptr_t kernel_space_limit	= 0x03FFFFFF;
-
-				/**
-				  * @brief	First address of the shared-memory-space
-				  */
-				static const uintptr_t shm_space_base		= 0x04000000;
-
-				/**
-				  * @brief	Last address of the shared-memory-space
-				  */
-				static const uintptr_t shm_space_limit		= 0x07FFFFFF;
+				static const uintptr_t kernel_space_limit	= 0x07FFFFFF;
 
 				/**
 				  * @brief	First address of the user-space

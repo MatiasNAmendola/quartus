@@ -26,7 +26,7 @@ vmm::error vmm::init( context *cntxt, uintptr_t base, uintptr_t limit )
 
 	for(uintptr_t addr = this->addr_space_base; addr < this->addr_space_limit; addr += memory::page_size_byte)
 	{
-		clear_bit(this->bitmap[bitmap_px(addr)], bitmap_py(addr));
+		set_bit(this->bitmap[bitmap_px(addr)], bitmap_py(addr));
 	}
 
 	if(!memory::kernel_base || !memory::kernel_limit)

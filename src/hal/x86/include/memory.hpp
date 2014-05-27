@@ -7,6 +7,8 @@
 
 #define align4k(addr)	((addr) & (~0xFFF))
 
+#define bytes_to_pages(bytes)	((bytes + memory::page_size_byte - 1) / memory::page_size_byte)
+
 extern const void *kernel_start;
 extern const void *kernel_end;
 
