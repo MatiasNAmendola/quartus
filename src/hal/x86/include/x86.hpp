@@ -12,6 +12,8 @@
 #include "pmm.hpp"
 #include "mapper.hpp"
 #include "vmm.hpp"
+#include "cmos.hpp"
+#include "pit.hpp"
 
 namespace hal
 {

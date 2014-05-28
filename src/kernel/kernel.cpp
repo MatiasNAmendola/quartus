@@ -6,6 +6,7 @@ includes from 'kernel'
 #include "include/output.hpp"
 #include "include/heap.hpp"
 #include "include/new.hpp"
+#include "include/timer.hpp"
 
 using namespace kernel;
 
@@ -158,30 +159,30 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	kernel_context.activate();
 
 	/*
-	Testing the kernel hep
+	Initialise the system-timer
 	*/
-	kout << output::endl << "Testing the heap..." << output::endl;
+	#if defined(ARCH_X86) || defined(ARCH_X64)
 
-	void *block_a, *block_b, *block_c;
+	time_t year, month, day, hour, min, sec;
+	cmos::date(&year, &month, &day);
+	cmos::time(&hour, &min, &sec);
 
-	block_a = malloc(42);
-	block_b = malloc(1235);
-	kout << "block a " << block_a << " (  42 Byte)" << output::endl;
-	kout << "block b " << block_b << " (1235 Byte)" << output::endl;	
+	pit::init(pit::channel_0, pit::rate, 1000);
 
-	free(block_a);
-	kout << "block a freed" << output::endl;
+	timer::init(0, unixtime(year, month, day, hour, min, sec), 1000);
 
-	free(block_b);
-	kout << "block b freed" << output::endl;
-	
-	block_c = malloc(1024);	
-	kout << "block c " << block_c << " (1024 Byte)" << output::endl;	
+	time_t time = timer::time;
 
-	free(block_c);
-	kout << "block c freed" << output::endl;
+	kout << ctime(&time);
+
+	#elif defined(ARCH_RPI)
+	/*
+	TODO
+	*/
+	#endif
 
 	intr::enable();
+
 
 	while(1);
 }

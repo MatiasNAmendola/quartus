@@ -30,8 +30,6 @@ namespace hal
 				  */
 				typedef cpu::cpu_state * (*handler_t)( cpu::cpu_state *cpu );
 
-
-
 				/**
 				  * @brief	Initialises the Programmable Interrupt Controller.
 				  *
@@ -82,7 +80,6 @@ namespace hal
 				  * @param	handler		Pointer to a function used as IRQ-handler
 				  */
 				void handler( uint8_t irq, handler_t handler );
-
 
 
 				/**

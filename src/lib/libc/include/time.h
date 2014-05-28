@@ -2,12 +2,12 @@
 #define TIME_H
 
 #ifndef NULL
-	#define NULL		((void*)0x0)
+	#define NULL ((void*) 0)
 #endif
 
-typedef long long	clock_t;
+typedef long int	clock_t;
 typedef __SIZE_TYPE__	size_t;
-typedef long long	time_t;
+typedef long int	time_t;
 
 struct tm
 {
@@ -21,6 +21,8 @@ struct tm
 	int tm_yday;
 	int tm_isdst;
 };
+
+time_t unixtime( int year, int month, int day, int hour, int minute, int seconds );
 
 clock_t clock();
 double difftime( time_t end, time_t beg );

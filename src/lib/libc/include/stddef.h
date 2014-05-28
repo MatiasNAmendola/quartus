@@ -1,7 +1,9 @@
 #ifndef STDDEF_H
 #define STDDEF_H
 
-#define NULL ((void*) 0)
+#ifndef NULL
+	#define NULL ((void*) 0)
+#endif
 
 #define offsetof(TYPE, MEMBER) ((size_t)((char*)&((TYPE *)(0))->MEMBER))
 
