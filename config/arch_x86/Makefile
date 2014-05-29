@@ -20,6 +20,11 @@ clean:
 test:
 	qemu-system-i386 -cpu pentium3 -D $(LOGDIR)/test-x86.log -d int -k de -m 1024 -serial stdio -name quartus-x86 -kernel $(BUILDDIR)/quartus-x86 -initrd $(BUILDDIR)/initrd
 
+iso:
+	cp $(BUILDDIR)/quartus-x86 $(BUILDDIR)/iso-x86/quartus-x86
+	cp $(BUILDDIR)/initrd $(BUILDDIR)/iso-x86/initrd
+	grub-mkrescue --output=$(BUILDDIR)/quartus-x86.iso $(BUILDDIR)/iso-x86
+
 %.o: %.c 
 	$(CC) $(PREPROC) $(CCFLAGS) $(INCL) -c -o $@ $^
 %.o: %.cpp 

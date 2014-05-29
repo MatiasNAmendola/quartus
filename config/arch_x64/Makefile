@@ -19,6 +19,9 @@ clean:
 test:
 	@echo "\033[0;31mSorry, x64 support is not implemented yet.\033[0m"
 
+iso:
+	@echo "\033[0;31mSorry, x64 support is not implemented yet.\033[0m"
+
 %.o: %.c 
 	$(CC) $(PREPROC) $(CCFLAGS) $(INCL) -c -o $@ $^
 %.o: %.cpp 

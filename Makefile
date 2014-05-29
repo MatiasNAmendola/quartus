@@ -39,6 +39,12 @@ qemu-test-x64:
 qemu-test-rpi:
 	make --no-print-directory -f ./config/arch_rpi/Makefile test
 
+iso-x86:
+	make --no-print-directory -f ./config/arch_x86/Makefile iso
+
+iso-x64:
+	make --no-print-directory -f ./config/arch_x64/Makefile iso
+
 clean:
 	make --no-print-directory -f ./config/arch_x86/Makefile clean
 	make --no-print-directory -f ./config/arch_x64/Makefile clean
