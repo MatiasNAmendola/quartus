@@ -2,8 +2,6 @@
 #include "include/thread.hpp"
 #include "include/scheduler.hpp"
 
-#include "include/output.hpp"
-
 #include <cstring>
 
 using kernel::process;

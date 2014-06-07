@@ -1,6 +1,5 @@
 #include "include/scheduler.hpp"
 #include "include/memmgr.hpp"
-#include "include/output.hpp"
 
 using kernel::scheduler;
 

@@ -3,8 +3,6 @@
 
 #include "heap.hpp"
 
-#include "output.hpp"
-
 /**
   * @brief	Default allocation function; std-c++
   *

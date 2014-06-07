@@ -260,8 +260,6 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	thrdmgr.add(thrd14);
 
 
-	kout << "jo" << output::endl;
-
 	intr::enable();
 
 	while(1);
