@@ -42,7 +42,6 @@ process::~process(  )
 		delete thrd;
 	}
 
-	(*this->memmgr).clear();
 	delete this->memmgr;
 }
 

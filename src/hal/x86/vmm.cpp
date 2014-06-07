@@ -9,7 +9,19 @@ vmm::vmm(  ) : cntxt(nullptr), addr_space_base(0x0), addr_space_limit(0x0)
 
 vmm::~vmm(  )
 {
-	
+	for(size_t x = bitmap_px(this->addr_space_base); x <= bitmap_px(this->addr_space_limit); x++)
+	{
+		if(this->bitmap[x] != 0xFFFFFFFF)
+		{
+			for(size_t y = 0; y < 32 && x <= bitmap_px(this->addr_space_limit); y++)
+			{
+				if(!(this->bitmap[x] & (1 << y)))
+				{
+					this->free(addr(x,y));
+				}
+			}
+		}
+	}
 }
 
 vmm::error vmm::init( context *cntxt, uintptr_t base, uintptr_t limit )
@@ -43,23 +55,6 @@ vmm::error vmm::init( context *cntxt, uintptr_t base, uintptr_t limit )
 	clear_bit(this->bitmap[bitmap_px((uintptr_t)this->bitmap)], bitmap_py((uintptr_t)this->bitmap));
 
 	return vmm::error::init_ok;
-}
-
-void vmm::clear(  )
-{
-	for(size_t x = bitmap_px(this->addr_space_base); x <= bitmap_px(this->addr_space_limit); x++)
-	{
-		if(this->bitmap[x] != 0xFFFFFFFF)
-		{
-			for(size_t y = 0; y < 32 && x <= bitmap_px(this->addr_space_limit); y++)
-			{
-				if(!(this->bitmap[x] & (1 << y)))
-				{
-					this->free(addr(x,y));
-				}
-			}
-		}
-	}
 }
 
 uintptr_t vmm::alloc( uint32_t flags )

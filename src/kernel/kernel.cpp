@@ -259,6 +259,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	thrdmgr.add(thrd13);
 	thrdmgr.add(thrd14);
 
+	delete proc0;
 
 	intr::enable();
 

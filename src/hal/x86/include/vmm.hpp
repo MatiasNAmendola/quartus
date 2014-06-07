@@ -75,11 +75,6 @@ namespace hal
 				error init( context *cntxt, uintptr_t base, uintptr_t limit );
 
 				/**
-				  * @brief	Frees all memory allocated by the memory manager.
-				  */
-				void clear(  );
-
-				/**
 			          * @brief	Allocates one page of memory.
 			          *
 				  * @param	flags		Flags used for the mapping of the allocated page
