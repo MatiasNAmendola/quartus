@@ -8,7 +8,26 @@ includes from 'kernel'
 #include "include/new.hpp"
 #include "include/timer.hpp"
 
+#include "include/process.hpp"
+#include "include/thread.hpp"
+#include "include/scheduler.hpp"
+
 using namespace kernel;
+
+extern "C"
+{
+	static char chr = 'A';
+
+	void thread_entry(  )
+	{
+		char my_chr = chr++;
+
+		while(1)
+		{	
+			kout << my_chr;
+		}
+	}
+}
 
 void init( multiboot::info *mbs, uint32_t mb_magic )
 {
@@ -118,7 +137,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	/*
 	Initialise the Virtual Memory Manager
 	*/
-	switch(vmm::error err = vmmgr.init(&kernel_context, vmm::kernel_space_base, vmm::kernel_space_limit))
+	switch(vmm::error err = vmmgr().init(&kernel_context, vmm::kernel_space_base, vmm::kernel_space_limit))
 	{
 		case vmm::error::no_kernel_addr:
 			kout << output::endl << "No kernel address! (" << output::hex << err << ")" << output::endl;
@@ -133,15 +152,15 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	/*
 	Video-memory mapping
 	*/
-	vmmgr.map(memory::videomem, memory::videomem, vmm::present | vmm::write);
+	vmmgr().map(memory::videomem, memory::videomem, vmm::present | vmm::write);
 
 	/*
 	Multibootinformation mapping
 	*/
-	vmmgr.map(align4k((uintptr_t)mbs), align4k((uintptr_t)mbs), vmm::present);
-	vmmgr.map(align4k((uintptr_t)mbs->cmdline), align4k((uintptr_t)mbs->cmdline), vmm::present);
-	vmmgr.map(align4k((uintptr_t)mbs->boot_loader_name), align4k((uintptr_t)mbs->boot_loader_name), vmm::present);
-	vmmgr.map(align4k((uintptr_t)mbs->mods_addr), align4k((uintptr_t)mbs->mods_addr), vmm::present, ((sizeof(multiboot::mods) * mbs->mods_count + 4095) / 4096));
+	vmmgr().map(align4k((uintptr_t)mbs), align4k((uintptr_t)mbs), vmm::present);
+	vmmgr().map(align4k((uintptr_t)mbs->cmdline), align4k((uintptr_t)mbs->cmdline), vmm::present);
+	vmmgr().map(align4k((uintptr_t)mbs->boot_loader_name), align4k((uintptr_t)mbs->boot_loader_name), vmm::present);
+	vmmgr().map(align4k((uintptr_t)mbs->mods_addr), align4k((uintptr_t)mbs->mods_addr), vmm::present, ((sizeof(multiboot::mods) * mbs->mods_count + 4095) / 4096));
 
 	multiboot::mods *mods = (multiboot::mods*)mbs->mods_addr;
 
@@ -149,7 +168,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	{
 		for(uintptr_t addr = mods[index].mod_start; addr < mods[index].mod_end; addr += memory::page_size_byte)
 		{
-			vmmgr.map(addr, addr, vmm::present);
+			vmmgr().map(addr, addr, vmm::present);
 		}
 	}
 
@@ -157,6 +176,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	Activate the kernel virtual-memory context
 	*/
 	kernel_context.activate();
+	kernel::cntxt = &kernel_context;
 
 	/*
 	Initialise the system-timer
@@ -167,9 +187,9 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	cmos::date(&year, &month, &day);
 	cmos::time(&hour, &min, &sec);
 
-	pit::init(pit::channel_0, pit::rate, 1000);
+	pit::init(pit::channel_0, pit::rate, 500);
 
-	timer::init(0, unixtime(year, month, day, hour, min, sec), 1000);
+	timer::init(0, unixtime(year, month, day, hour, min, sec), 500);
 
 	time_t time = timer::time;
 
@@ -181,8 +201,68 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	*/
 	#endif
 
-	intr::enable();
+	/*
+	Get an instance of the process an thread managers
+	*/
+	processmgr &procmgr   = processmgr::instance(); 
+	threadmgr  &thrdmgr   = threadmgr::instance(); 
+	scheduler  &scheduler = scheduler::instance();
 
+	/*
+	Spawn first process
+	*/
+	process *proc0 = new process("proc0", "", 0, &kernel_context);
+
+	procmgr.add(proc0);
+
+	thread *thrd00 = new thread(proc0, (uintptr_t)thread_entry, thread::kernel);
+	thread *thrd01 = new thread(proc0, (uintptr_t)thread_entry, thread::kernel);
+	thread *thrd02 = new thread(proc0, (uintptr_t)thread_entry, thread::kernel);
+	thread *thrd03 = new thread(proc0, (uintptr_t)thread_entry, thread::kernel);
+	thread *thrd04 = new thread(proc0, (uintptr_t)thread_entry, thread::kernel);
+
+	scheduler.add(thrd00);
+	scheduler.add(thrd01);
+	scheduler.add(thrd02);
+	scheduler.add(thrd03);
+	scheduler.add(thrd04);
+
+	thrdmgr.add(thrd00);
+	thrdmgr.add(thrd01);
+	thrdmgr.add(thrd02);
+	thrdmgr.add(thrd03);
+	thrdmgr.add(thrd04);
+
+
+	/*
+	Spawn new process
+	*/
+	process *proc1 = new process("proc1", "", 0, &kernel_context);
+
+	procmgr.add(proc1);
+
+	thread *thrd10 = new thread(proc1, (uintptr_t)thread_entry, thread::kernel);
+	thread *thrd11 = new thread(proc1, (uintptr_t)thread_entry, thread::kernel);
+	thread *thrd12 = new thread(proc1, (uintptr_t)thread_entry, thread::kernel);
+	thread *thrd13 = new thread(proc1, (uintptr_t)thread_entry, thread::kernel);
+	thread *thrd14 = new thread(proc1, (uintptr_t)thread_entry, thread::kernel);
+
+	scheduler.add(thrd10);
+	scheduler.add(thrd11);
+	scheduler.add(thrd12);
+	scheduler.add(thrd13);
+	scheduler.add(thrd14);
+
+	thrdmgr.add(thrd10);
+	thrdmgr.add(thrd11);
+	thrdmgr.add(thrd12);
+	thrdmgr.add(thrd13);
+	thrdmgr.add(thrd14);
+
+
+	kout << "jo" << output::endl;
+
+	intr::enable();
 
 	while(1);
 }

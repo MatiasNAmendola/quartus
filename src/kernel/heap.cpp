@@ -12,7 +12,7 @@ heap kernel::hpmmgr;
 
 heap::heap(  )
 {
-	this->first 	   = (heap::item*)vmmgr.alloc(vmm::present | vmm::write, 4);
+	this->first 	   = (heap::item*)vmmgr().alloc(vmm::present | vmm::write, 4);
 	this->first->flags = heap::flag_free;
 	this->first->size  = memory::page_size_byte * 4;
 	this->first->next  = nullptr;
@@ -161,7 +161,7 @@ void heap::split( heap::item *itm, heap::item **part_1, heap::item **part_2, siz
 
 void heap::enlarge( size_t size )
 {
-	heap::item *new_itm = (heap::item*)vmmgr.alloc(vmm::present | vmm::write, bytes_to_pages(size + sizeof(heap::item)));
+	heap::item *new_itm = (heap::item*)vmmgr().alloc(vmm::present | vmm::write, bytes_to_pages(size + sizeof(heap::item)));
 
 	if(!new_itm)
 	{

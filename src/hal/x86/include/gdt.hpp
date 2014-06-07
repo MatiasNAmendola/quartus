@@ -23,13 +23,18 @@ namespace hal
 
 			public:
 				/**
+				  * @brief	Size of the Task State Segment
+				  */
+				static const size_t tss_size		= 32;
+				
+				/**
 				  * @brief	Structure used to set up a Task State Segment.
 				  *
 				  * @todo	Implement
 				  */
 				struct tss_t
 				{
-
+					uint32_t	tss[tss_size];
 				} PACKED;
 
 			private:
@@ -97,7 +102,10 @@ namespace hal
 				  */
 				void load(  );
 
-
+				/**
+				  * @brief	Gets a reference to the task state segment.
+				  */
+				tss_t &tss(  ) { static tss_t tss; return tss; }
 
 				/**
 				  * @brief	Number of descriptors.
@@ -105,12 +113,6 @@ namespace hal
 				  *		1 nulldescriptor + 2 descriptors for kernel + 2 for user + 1 tss
 				  */
 				static const size_t descriptor_count 	= 1 + 2 + 2 + 1;
-
-				/**
-				  * @brief	Size of the Task State Segment
-				  */
-				static const size_t tss_size		= 32;
-
 
 
 
@@ -182,7 +184,7 @@ namespace hal
 				  *
 				  *		This memory-structure is used as the Task State Segment.
 				  */
-				uint32_t tss[tss_size];
+				//uint32_t tss[tss_size];
 
 				/**
 				  * @brief	Sets up a new entry within the GDT.

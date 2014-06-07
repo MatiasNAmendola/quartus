@@ -22,3 +22,6 @@
 
 # Documentation
 doc/
+
+# Logfiles
+log/

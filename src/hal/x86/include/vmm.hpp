@@ -166,12 +166,12 @@ namespace hal
 				/**
 				  * @brief	Last address of the kernel-space
 				  */
-				static const uintptr_t kernel_space_limit	= 0x07FFFFFF;
+				static const uintptr_t kernel_space_limit	= 0x03FFFFFF;
 
 				/**
 				  * @brief	First address of the user-space
 				  */
-				static const uintptr_t user_space_base		= 0x08000000;
+				static const uintptr_t user_space_base		= 0x04000000;
 
 				/**
 				  * @brief	Last address of the user-space
@@ -226,36 +226,36 @@ namespace hal
 			          */
 			        static const uint32_t bitmap_size 	= memory::memory_size_kib / memory::page_size_kib / 32;
 				
-				private:
-					/**
-					  * @brief	The memory context
-					  */
-					context 	*cntxt;
+			private:
+				/**
+				  * @brief	The memory context
+				  */
+				context 	*cntxt;
 
-					/**
-					  * @brief	Base address of the address-space managed by the memory manager
-					  */
-					uintptr_t	addr_space_base;
+				/**
+				  * @brief	Base address of the address-space managed by the memory manager
+				  */
+				uintptr_t	addr_space_base;
 
-					/**
-					  * @brief	Limit address of the address-space managed by the memory manager
-					  */
-					uintptr_t	addr_space_limit;
+				/**
+				  * @brief	Limit address of the address-space managed by the memory manager
+				  */
+				uintptr_t	addr_space_limit;
 
-					/**
-			          	  * @brief	Bitmap used for managing the Virtual memory.
-			         	  */
-					uint32_t	bitmap[bitmap_size];
+				/**
+			          * @brief	Bitmap used for managing the Virtual memory.
+			          */
+				uint32_t	bitmap[bitmap_size];
 
-					/**
-					  * @brief	Used to store the last freed address; allows faster allocation of single pages.
-					  */
-					uintptr_t	fast_access	= 0x0;
+				/**
+				  * @brief	Used to store the last freed address; allows faster allocation of single pages.
+				  */
+				uintptr_t	fast_access	= 0x0;
 
-					/**
-					  * @brief	Used to speed up memory allocation.
-					  */
-					size_t		speedup_x	= 0;
+				/**
+				  * @brief	Used to speed up memory allocation.
+				  */
+				size_t		speedup_x	= 0;
 		};
 	}
 }

@@ -1,4 +1,5 @@
 #include "include/timer.hpp"
+#include "include/scheduler.hpp"
 
 using namespace kernel;
 
@@ -30,5 +31,7 @@ cpu::cpu_state *timer::tick( cpu::cpu_state *cpu )
 		timer::time++;
 	}
 
-	return cpu;
+	scheduler &scheduler = scheduler::instance();
+
+	return scheduler.schedule(cpu);
 }

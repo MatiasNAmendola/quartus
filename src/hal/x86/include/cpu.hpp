@@ -96,8 +96,7 @@ namespace hal
 				/**
 				  * @brief	The ss-register of x86-cpu
 				  */
-				uint32_t   ss;
-				
+				uint32_t   ss;				
 			} PACKED;
 
 			/**

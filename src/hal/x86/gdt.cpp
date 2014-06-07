@@ -42,7 +42,7 @@ void gdt::init(  )
 	this->set_entry(4, 0, 0xfffff, (gdt::segment | gdt::bit32 | gdt::dataseg | gdt::gran4k | gdt::present | gdt::ring3));				
 	
 	//TSS
-	this->set_entry(5, (uintptr_t)tss, sizeof(tss), (gdt::tss386 | gdt::present | gdt::ring3));
+	this->set_entry(5, (uintptr_t)(this->tss().tss), sizeof(tss_t), (gdt::tss386 | gdt::present | gdt::ring3));
 }
 
 /*
