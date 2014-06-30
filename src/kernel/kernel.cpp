@@ -197,7 +197,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 
 	time_t time = timer::time;
 
-	kout << ctime(&time);
+	kout << output::endl << ctime(&time);
 
 	#elif defined(ARCH_RPI)
 	/*

@@ -28,6 +28,32 @@ namespace kernel
 			  */
 			typedef size_t		id_t;
 
+			/**
+			  * @brief	Information structure describing a process.
+			  */
+			struct info_t
+			{
+				/**
+				  * @brief	The process id
+				  */
+				id_t		id;
+
+				/**
+				  * @brief	The id of the parent process id
+				  */
+				id_t		parent;
+
+				/**
+				  * @brief	The name of the process
+				  */
+				char 		name[64];
+
+				/**
+				  * @brief	The commandline of the process
+				  */
+				char		cmdline[1024];
+			};
+
 		private:
 
 		public:
@@ -40,11 +66,18 @@ namespace kernel
 			  * @param	cntxt		Virtual memory context containing the process-image
 			  */
 			process( const char name[64], const char cmdline[1024], process::id_t parent, context *cntxt );
-			
+
 			/**
 			  * @brief	The destructor
 			  */
 			~process(  );
+
+			/**
+			  * @brief	Get information about the process
+			  * 
+			  * @return			Process information structure containing information on the process.
+			  */
+			info_t info(  );
 
 		private:
 			/**

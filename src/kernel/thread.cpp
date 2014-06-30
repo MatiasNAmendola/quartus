@@ -2,8 +2,6 @@
 #include "include/memmgr.hpp"
 #include "include/heap.hpp"
 
-#include "include/output.hpp"
-
 using kernel::thread;
 using kernel::threadmgr;
 
@@ -74,6 +72,17 @@ thread::~thread(  )
 	kernel::free((void*)this->kstack);
 	
 	(*this->proc->memmgr).free(this->ustack, bytes_to_pages(thread::ustack_size));
+}
+
+thread::info_t thread::info(  )
+{
+	static thread::info_t info;
+
+	info.id    = this->id;
+	info.state = this->state;
+	info.flags = this->flags;
+
+	return info;
 }
 
 void thread::save( cpu::cpu_state *cpu )

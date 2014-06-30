@@ -46,6 +46,27 @@ namespace kernel
 				  */
 				waiting
 			};
+
+			/**
+			  * @brief	Information structure describing a thread.
+			  */
+			struct info_t
+			{
+				/**
+				  * @brief	The thread id
+				  */
+				id_t		id;
+
+				/**
+				  * @brief	The state of the thread
+				  */
+				state_t		state;
+
+				/**
+				  * @brief	The flags of the thread
+				  */
+				size_t		flags;
+			};
 			
 		private:
 			
@@ -64,6 +85,13 @@ namespace kernel
 			  * @brief	The destructor
 			  */
 			~thread(  );
+
+			/**
+			  * @brief	Get information about the thread
+			  * 
+			  * @return			Thread information structure containing information on the thread.
+			  */
+			info_t info(  );
 
 			/**
 			  * @brief	Saves the cpu-state to the thread

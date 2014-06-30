@@ -4,7 +4,7 @@
 #include "include/thread.hpp"
 #include "include/scheduler.hpp"
 
-#include "include/output.hpp"
+#include <cstring>
 
 cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 {
@@ -16,6 +16,9 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 
 	process *proc;
 	thread *thrd;
+
+	process::info_t	pinfo;
+	thread::info_t  tinfo;
 
 	switch(cpu->syscall_number())
 	{
@@ -69,7 +72,24 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 		break;
 
 		case syscall::proc_info:
+			proc = scheduler.running->proc;
 
+			if(proc && (process::info_t*)cpu->param1() != nullptr)
+			{
+				pinfo = proc->info();
+
+				((process::info_t*)(cpu->param1()))->id	    = pinfo.id;
+				((process::info_t*)(cpu->param1()))->parent = pinfo.parent;
+
+				strcpy(((process::info_t*)(cpu->param1()))->name, pinfo.name);
+				strcpy(((process::info_t*)(cpu->param1()))->cmdline, pinfo.cmdline);
+
+				cpu->param0() = cpu->param1();
+			}
+			else
+			{
+				cpu->param0() = 0x0;
+			}
 		break;
 
 		case syscall::create_thread:
@@ -156,7 +176,22 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 		break;
 
 		case thread_info:
-	
+			thrd = scheduler.running;
+
+			if(thrd && (thread::info_t*)cpu->param1() != nullptr)
+			{
+				tinfo = thrd->info();
+
+				((thread::info_t*)(cpu->param1()))->id	  = tinfo.id;
+				((thread::info_t*)(cpu->param1()))->state = tinfo.state;
+				((thread::info_t*)(cpu->param1()))->flags = tinfo.flags;
+
+				cpu->param0() = cpu->param1();
+			}
+			else
+			{
+				cpu->param0() = 0x0;
+			}
 		break;
 
 		
@@ -188,8 +223,17 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 		break;
 
 		case memory_info:
-			((pmm::meminfo_t*)(cpu->param1()))->free = pmm.info().free;
-			((pmm::meminfo_t*)(cpu->param1()))->used = pmm.info().used;
+			if((pmm::meminfo_t*)cpu->param1() != nullptr)
+			{
+				((pmm::meminfo_t*)(cpu->param1()))->free = pmm.info().free;
+				((pmm::meminfo_t*)(cpu->param1()))->used = pmm.info().used;
+	
+				cpu->param0() = cpu->param1();
+			}
+			else
+			{
+				cpu->param0() = 0x0;
+			}
 		break;
 	}
 

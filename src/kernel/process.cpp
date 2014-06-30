@@ -7,8 +7,6 @@
 using kernel::process;
 using kernel::processmgr;
 
-//kernel::processmgr *kernel::procmgr;
-
 process::process( const char name[64], const char cmdline[1024], process::id_t parent, context *cntxt ) : memory_version(0)
 {
 	strcpy(this->name, name);
@@ -43,6 +41,19 @@ process::~process(  )
 	}
 
 	delete this->memmgr;
+}
+
+process::info_t process::info(  )
+{
+	static process::info_t info;
+
+	info.id 	= this->id;
+	info.parent 	= this->parent;
+
+	strcpy(info.name, this->name);
+	strcpy(info.cmdline, this->cmdline);
+
+	return info;
 }
 
 processmgr::processmgr(  )
