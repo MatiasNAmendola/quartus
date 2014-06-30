@@ -5,6 +5,8 @@
 
 #include "process.hpp"
 
+#include "syscall.hpp"
+
 namespace kernel
 {
 	/**
@@ -15,6 +17,8 @@ namespace kernel
 		friend class process;
 		friend class scheduler;
 		friend class threadmgr;
+
+		friend cpu::cpu_state *syscall::handle( cpu::cpu_state *cpu );
 
 		public:
 			/**

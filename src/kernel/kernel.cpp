@@ -12,12 +12,14 @@ includes from 'kernel'
 #include "include/thread.hpp"
 #include "include/scheduler.hpp"
 
+#include "include/syscall.hpp"
+
 using namespace kernel;
 
 extern "C"
 {
-	static char chr = 'A';
-
+	static char chr  = 'A';
+	
 	void thread_entry(  )
 	{
 		char my_chr = chr++;
@@ -25,6 +27,8 @@ extern "C"
 		while(1)
 		{	
 			kout << my_chr;
+
+			asm("int $0xFF" : : "a"(syscall::exit_thread));
 		}
 	}
 }
@@ -208,6 +212,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	threadmgr  &thrdmgr   = threadmgr::instance(); 
 	scheduler  &scheduler = scheduler::instance();
 
+
 	/*
 	Spawn first process
 	*/
@@ -232,7 +237,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	thrdmgr.add(thrd02);
 	thrdmgr.add(thrd03);
 	thrdmgr.add(thrd04);
-
+	
 
 	/*
 	Spawn new process
@@ -259,8 +264,15 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	thrdmgr.add(thrd13);
 	thrdmgr.add(thrd14);
 
-	delete proc0;
+	/*
+	Initialise the syscall interface
+	*/
+	intr::handler(0xFF, []( cpu::cpu_state *cpu ) { return syscall::handle(cpu); });
+	intr::handler(0xEE, []( cpu::cpu_state *cpu ) { kernel::scheduler &sched = kernel::scheduler::instance(); return sched.schedule(cpu); });
 
+	/*
+	Enable interrupts; give control to threads
+	*/
 	intr::enable();
 
 	while(1);

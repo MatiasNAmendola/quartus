@@ -1,5 +1,8 @@
 #include "include/thread.hpp"
 #include "include/memmgr.hpp"
+#include "include/heap.hpp"
+
+#include "include/output.hpp"
 
 using kernel::thread;
 using kernel::threadmgr;
@@ -17,7 +20,7 @@ thread::thread( process *proc, uintptr_t entry, size_t flags )
 
 	this->flags = flags;
 
-	this->kstack = kernel::vmmgr().alloc(vmm::present | vmm::write, bytes_to_pages(thread::kstack_size));
+	this->kstack = (uintptr_t)kernel::malloc(thread::kstack_size);
 
 	if(flags & thread::kernel)
 	{
@@ -68,7 +71,7 @@ thread::~thread(  )
 		}
 	}
 
-	kernel::vmmgr().free(this->kstack, bytes_to_pages(thread::kstack_size));
+	kernel::free((void*)this->kstack);
 	
 	(*this->proc->memmgr).free(this->ustack, bytes_to_pages(thread::ustack_size));
 }

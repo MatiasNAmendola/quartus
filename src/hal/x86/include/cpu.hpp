@@ -96,8 +96,17 @@ namespace hal
 				/**
 				  * @brief	The ss-register of x86-cpu
 				  */
-				uint32_t   ss;				
-			} PACKED;
+				uint32_t   ss;	
+
+				inline uint32_t &param0(  ) { return this->eax; }
+				inline uint32_t &param1(  ) { return this->ebx; }			
+				inline uint32_t &param2(  ) { return this->ecx; }			
+				inline uint32_t &param3(  ) { return this->edx; }			
+				inline uint32_t &param4(  ) { return this->esi; }
+				inline uint32_t &param5(  ) { return this->edi; }
+				inline uint32_t &param6(  ) { return this->ebp; }	
+				inline uint32_t &syscall_number(  ) { return this->eax; }
+			} /*PACKED*/;
 
 			/**
 			  * @brief	Stops the cpu (the whole system)

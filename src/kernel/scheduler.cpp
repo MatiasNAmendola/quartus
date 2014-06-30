@@ -5,6 +5,7 @@ using kernel::scheduler;
 
 scheduler::scheduler(  ) : running(nullptr), cntxt(nullptr)
 {
+
 }
 
 void scheduler::add( kernel::thread *thrd )

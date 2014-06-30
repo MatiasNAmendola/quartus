@@ -5,6 +5,8 @@
 
 #include "../../hal/hal.hpp"
 
+#include "syscall.hpp"
+
 namespace kernel
 {
 	class thread;
@@ -17,6 +19,8 @@ namespace kernel
 		friend class thread;
 		friend class scheduler;
 		friend class processmgr;
+
+		friend cpu::cpu_state *syscall::handle( cpu::cpu_state *cpu );
 
 		public:
 			/**

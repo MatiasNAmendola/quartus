@@ -6,6 +6,8 @@
 
 #include "thread.hpp"
 
+#include "syscall.hpp"
+
 namespace kernel
 {
 	/**
@@ -13,6 +15,8 @@ namespace kernel
 	  */
 	class scheduler
 	{
+		friend cpu::cpu_state *syscall::handle( cpu::cpu_state *cpu );
+
 		SINGLETON(scheduler)
 
 		public:
@@ -39,7 +43,7 @@ namespace kernel
 			  * @return			The new cpu-state (state of the new thread)
 			  */
 			cpu::cpu_state *schedule( cpu::cpu_state *cpu );
-			
+
 		private:
 			/**
 			  * @brief	The schedulers ready queue; contains all thread ready for execution
