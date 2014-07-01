@@ -202,9 +202,18 @@ bool vmm::map( uintptr_t virt, uintptr_t phys, uint32_t flags, size_t n )
 		return false;
 	}
 
-	clear_bit(this->bitmap[bitmap_px(virt)], bitmap_py(virt));
+	while(n--)
+	{
+		if(!this->map(virt, phys, flags))
+		{
+			return false;
+		}
+		
+		virt += memory::page_size_byte;
+		phys += memory::page_size_byte;
+	}
 
-	return this->cntxt->map(virt, phys, flags, n);
+	return true;
 }
 
 bool vmm::check( uintptr_t addr )

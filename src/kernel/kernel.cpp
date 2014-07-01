@@ -14,6 +14,10 @@ includes from 'kernel'
 
 #include "include/syscall.hpp"
 
+#include "include/tar.hpp"
+
+#include <cstring>
+
 using namespace kernel;
 
 extern "C"
@@ -164,7 +168,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	vmmgr().map(align4k((uintptr_t)mbs), align4k((uintptr_t)mbs), vmm::present);
 	vmmgr().map(align4k((uintptr_t)mbs->cmdline), align4k((uintptr_t)mbs->cmdline), vmm::present);
 	vmmgr().map(align4k((uintptr_t)mbs->boot_loader_name), align4k((uintptr_t)mbs->boot_loader_name), vmm::present);
-	vmmgr().map(align4k((uintptr_t)mbs->mods_addr), align4k((uintptr_t)mbs->mods_addr), vmm::present, ((sizeof(multiboot::mods) * mbs->mods_count + 4095) / 4096));
+	vmmgr().map(align4k((uintptr_t)mbs->mods_addr), align4k((uintptr_t)mbs->mods_addr), vmm::present, ((sizeof(multiboot::mods) * mbs->mods_count + 4095) / 4096) + 1);
 
 	multiboot::mods *mods = (multiboot::mods*)mbs->mods_addr;
 
@@ -181,6 +185,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	*/
 	kernel_context.activate();
 	kernel::cntxt = &kernel_context;
+
 
 	/*
 	Initialise the system-timer
@@ -270,10 +275,29 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	intr::handler(0xFF, []( cpu::cpu_state *cpu ) { return syscall::handle(cpu); });
 	intr::handler(0xEE, []( cpu::cpu_state *cpu ) { kernel::scheduler &sched = kernel::scheduler::instance(); return sched.schedule(cpu); });
 
+
+	/*
+	Test TAR
+	*/
+	if(mods[0].mod_start != 0x0)
+	{
+		tar *inittar = new tar(mods[0].mod_start);
+
+		char buffer[512];
+
+		memset(buffer, 0, 512);
+
+		inittar->read("info.txt", buffer, 512);
+
+		kout << output::endl << buffer << output::endl;
+
+		delete inittar;
+	}
+
 	/*
 	Enable interrupts; give control to threads
 	*/
-	intr::enable();
+	//intr::enable(); (disabled because of tar-testing)
 
 	while(1);
 }
