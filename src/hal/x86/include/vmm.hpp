@@ -131,7 +131,7 @@ namespace hal
 			          * @brief	Checks one page of memory
 			          *
 			          * @param	addr		The address of the page to be checked
-			          * @return			true if the page is unused, flase otherwise
+			          * @return			true if the page is unused, false otherwise
 			          */
 			        bool check( uintptr_t addr );
 
@@ -140,7 +140,7 @@ namespace hal
 			          *
 			          * @param	addr		The address of the first page to be checked
 			          * @param	n		Number of pages to check
-			          * @return			true if all pages are unused, flase otherwise
+			          * @return			true if all pages are unused, false otherwise
 			          */
 			        bool check( uintptr_t addr, size_t n );
 
