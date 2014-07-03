@@ -297,7 +297,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	/*
 	Enable interrupts; give control to threads
 	*/
-	//intr::enable(); (disabled because of tar-testing)
+	//intr::enable(); //(disabled because of tar-testing)
 
 	while(1);
 }

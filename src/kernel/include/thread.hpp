@@ -82,6 +82,16 @@ namespace kernel
 			thread( process *proc, uintptr_t entry, size_t flags );
 
 			/**
+			  * @brief	The constructor
+			  * 
+			  * @param	proc		The Process, the thread will be part of
+			  * @param	entry		The entry point of the new thread
+			  * @param	args		Arguments passed to the new thread
+			  * @param	flags		Flag; used for thread specialisation
+			  */
+			thread( process *proc, uintptr_t entry, uintptr_t args, size_t flags );
+
+			/**
 			  * @brief	The destructor
 			  */
 			~thread(  );
