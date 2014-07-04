@@ -141,6 +141,9 @@ namespace kernel
 			/**
 			  * @brief	Loads a process out of the ELF-file
 			  *
+			  * @param	name		Name of the new process
+			  * @param	cmdline		Commandline passed to the new process
+			  * @param	parent		Process-id of the parent process
 			  * @return 			Returns a pointer to the new process or a nullpointer if the operation failed
 			  */
 			process *load_process( const char name[64], const char cmdline[1024], process::id_t parent );

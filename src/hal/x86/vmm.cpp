@@ -298,7 +298,7 @@ bool vmm::umap( uintptr_t virt )
 		return false;
 	}
 
-	//set_bit(this->bitmap[bitmap_px(virt)], bitmap_py(virt));
+	set_bit(this->bitmap[bitmap_px(virt)], bitmap_py(virt));
 
 	return this->cntxt->umap(virt);
 }

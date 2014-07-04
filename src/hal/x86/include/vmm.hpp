@@ -94,7 +94,6 @@ namespace hal
 				/**
 			          * @brief	Allocates one page of memory without mapping to physical memory.
 			          *
-				  * @param	flags		Flags used for the mapping of the allocated page
 			          * @return			The address of the allocated page, or 0 if no free page was available
 			          */
 			        uintptr_t alloc_vonly(  );
@@ -102,7 +101,6 @@ namespace hal
 			        /**
 			          * @brief	Allocates pages of memory without mapping to physical memory.
 			          *
-				  * @param	flags		Flags used for the mapping of the allocated page
 			          * @param	n		Number of pages to allocate
 			          * @return			The address of the first allocated page, or 0 if no free page was available
 			          */
