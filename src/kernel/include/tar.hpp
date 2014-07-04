@@ -72,7 +72,7 @@ namespace kernel
 			tar( uintptr_t addr );
 
 			/**
-			  * @brief	Reads the content of an file within the tar
+			  * @brief	Reads the content of a file within the tar
 			  *
 			  * @param	name		Name of the file to be read
 			  * @param	buffer		The buffer, the read data will be stored in
@@ -80,6 +80,14 @@ namespace kernel
 			  * @return			Number of bytes actually read
 			  */
 			size_t read( const char *name, char *buffer, size_t size );
+
+			/**
+			  * @brief	Gets the size of a file within the tar
+			  *
+			  * @param	name		Name of the file
+			  * @return			Size of the file
+			  */
+			size_t size( const char *name );
 
 		private:
 			/**
@@ -90,7 +98,7 @@ namespace kernel
 			/**
 			  * @brief	The total size of the tar
 			  */
-			size_t		size;
+			size_t		total_size;
 
 			/**
 			  * @brief	The headers os the tar

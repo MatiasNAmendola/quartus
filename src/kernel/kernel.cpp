@@ -284,13 +284,13 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	{
 		tar *inittar = new tar(mods[0].mod_start);
 
-		char buffer[6000];
+		size_t size = inittar->size("elf.app");
 
-		memset(buffer, 0, 6000);
+		char *buffer = new char[size];
 
-		inittar->read("elf.app", buffer, 6000);
+		inittar->read("elf.app", buffer, size);
 
-		elf *app = new elf((uintptr_t)buffer, 6000);
+		elf *app = new elf((uintptr_t)buffer, size);
 
 		if(app->check())
 		{
@@ -308,6 +308,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 		}
 
 		delete app;
+		delete buffer;
 		delete inittar;
 	}
 

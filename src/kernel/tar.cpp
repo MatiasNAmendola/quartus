@@ -8,7 +8,7 @@
 
 using kernel::tar;
 
-tar::tar( uintptr_t addr ) : objects(0), size(0)
+tar::tar( uintptr_t addr ) : objects(0), total_size(0)
 {
 	if(addr)
 	{
@@ -23,10 +23,10 @@ tar::tar( uintptr_t addr ) : objects(0), size(0)
 
 			size_t size = tools::stoi(header->size, 8);
 
-			this->objects	+= 1;
-			this->size 	+= size;
+			this->objects		+= 1;
+			this->total_size 	+= size;
 
-			this->headers    	= (tar::header_t**)kernel::realloc(this->headers, this->objects * this->size);
+			this->headers    	= (tar::header_t**)kernel::realloc(this->headers, this->objects * this->total_size);
 			this->headers[index] 	= header;
 
 			addr += ((size / 512) + 1) * 512;
@@ -41,7 +41,7 @@ tar::tar( uintptr_t addr ) : objects(0), size(0)
 
 size_t tar::read( const char *name, char *buffer, size_t size )
 {
-	if(!buffer)
+	if(!name || !buffer)
 	{
 		return 0;
 	}
@@ -68,6 +68,33 @@ size_t tar::read( const char *name, char *buffer, size_t size )
 		memcpy(buffer, (char*)(header + 1), size);
 
 		return size;
+	}
+
+	return 0;
+}
+
+size_t tar::size( const char *name )
+{
+	if(!name)
+	{
+		return 0;
+	}
+
+	tar::header_t *header = nullptr;
+
+	for(size_t index = 0; index < this->objects; index++)
+	{
+		if(!strcmp(this->headers[index]->name, name))
+		{
+			header = this->headers[index];
+			
+			break;
+		}
+	}
+
+	if(header)
+	{
+		return (size_t)tools::stoi(header->size, 8);
 	}
 
 	return 0;
