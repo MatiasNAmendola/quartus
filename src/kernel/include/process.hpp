@@ -20,6 +20,8 @@ namespace kernel
 		friend class scheduler;
 		friend class processmgr;
 
+		friend class elf;
+
 		friend cpu::cpu_state *syscall::handle( cpu::cpu_state *cpu );
 
 		public:

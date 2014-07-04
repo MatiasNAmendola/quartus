@@ -92,6 +92,23 @@ namespace hal
 			        uintptr_t alloc( uint32_t flags, size_t n );
 
 				/**
+			          * @brief	Allocates one page of memory without mapping to physical memory.
+			          *
+				  * @param	flags		Flags used for the mapping of the allocated page
+			          * @return			The address of the allocated page, or 0 if no free page was available
+			          */
+			        uintptr_t alloc_vonly(  );
+
+			        /**
+			          * @brief	Allocates pages of memory without mapping to physical memory.
+			          *
+				  * @param	flags		Flags used for the mapping of the allocated page
+			          * @param	n		Number of pages to allocate
+			          * @return			The address of the first allocated page, or 0 if no free page was available
+			          */
+			        uintptr_t alloc_vonly( size_t n );
+
+				/**
 			          * @brief	Frees one page of memory
 			          *
 			          * @param	addr		The address of the page to be freed
@@ -127,6 +144,23 @@ namespace hal
 				  */
 				bool map( uintptr_t virt, uintptr_t phys, uint32_t flags, size_t n );
 
+				/**
+				  * @brief	Remove the mapping of a virtual address and marks the address as free
+				  *
+				  * @param	virt		Virtual address to unmap.
+				  * @return			true if the mapping was removed successfully, false otherwise.
+				  */
+				bool umap( uintptr_t virt );
+
+				/**
+				  * @brief	Remove the mapping of a virtual address range and marks the address range as free
+				  *
+				  * @param	virt		First virtual address to unmap
+				  * @param	n		Number of Pages to unmap
+				  * @return			true if the mapping was removed successfully, false otherwise.
+				  */
+				bool umap( uintptr_t virt, size_t n );
+	
 			        /**
 			          * @brief	Checks one page of memory
 			          *

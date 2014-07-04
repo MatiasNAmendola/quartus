@@ -15,6 +15,7 @@ includes from 'kernel'
 #include "include/syscall.hpp"
 
 #include "include/tar.hpp"
+#include "include/elf.hpp"
 
 #include <cstring>
 
@@ -283,21 +284,37 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	{
 		tar *inittar = new tar(mods[0].mod_start);
 
-		char buffer[512];
+		char buffer[6000];
 
-		memset(buffer, 0, 512);
+		memset(buffer, 0, 6000);
 
-		inittar->read("info.txt", buffer, 512);
+		inittar->read("elf.app", buffer, 6000);
 
-		kout << output::endl << buffer << output::endl;
+		elf *app = new elf((uintptr_t)buffer, 6000);
 
+		if(app->check())
+		{
+			process *proc2 = app->load_process("proc2", "", 0);
+		
+			if(proc2)
+			{
+				procmgr.add(proc2);
+
+				thread *thrd = new thread(proc2, app->entry(), thread::kernel);
+
+				thrdmgr.add(thrd);
+				scheduler.add(thrd);
+			}
+		}
+
+		delete app;
 		delete inittar;
 	}
 
 	/*
 	Enable interrupts; give control to threads
 	*/
-	//intr::enable(); //(disabled because of tar-testing)
+	intr::enable();
 
 	while(1);
 }

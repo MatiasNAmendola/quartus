@@ -154,6 +154,81 @@ uintptr_t vmm::alloc( uint32_t flags, size_t n )
 	return 0x0;
 }
 
+uintptr_t vmm::alloc_vonly(  )
+{
+	uintptr_t virt = 0x0;
+
+	if(this->fast_access)
+	{
+		virt = fast_access;
+
+		clear_bit(this->bitmap[bitmap_px(virt)], bitmap_py(virt));
+
+		fast_access = 0x0;
+
+		return virt;
+	}
+
+	return this->alloc_vonly(1);
+}
+
+uintptr_t vmm::alloc_vonly( size_t n )
+{
+	uintptr_t virt = 0x0;
+
+	size_t counter = 0;
+
+	if(this->speedup_x > bitmap_px(this->addr_space_limit) || this->speedup_x < bitmap_px(this->addr_space_base))
+	{
+		this->speedup_x = bitmap_px(this->addr_space_base);
+	}
+
+	for(size_t x = this->speedup_x; x <= bitmap_px(this->addr_space_limit) && counter < n; x++)
+	{
+		if(this->bitmap[x])
+		{
+			this->speedup_x = x;
+
+			for(size_t y = 0; y < 32 && counter < n; y++)
+			{
+				if((x > bitmap_px(this->addr_space_limit) /*&& y >= bitmap_py(this->addr_space_limit)*/))
+				{
+					return 0x0;
+				}
+				else if(/*x >= bitmap_px(this->addr_space_base) &&*/ x <= bitmap_px(this->addr_space_limit) && ((x == bitmap_px(this->addr_space_base) && y >= bitmap_py(this->addr_space_base)) || x > bitmap_px(this->addr_space_base)))
+				{
+					if(this->bitmap[x] & (1 << y))
+					{
+						counter++;
+
+						if(counter >= n)
+						{
+							virt = addr(x, y) - (n - 1) * memory::page_size_byte;
+
+							for(size_t i = 0; i < n; i++)
+							{
+								clear_bit(this->bitmap[bitmap_px((virt + i * memory::page_size_byte))], bitmap_py((virt + i * memory::page_size_byte)));
+							}
+
+							return virt;
+						}
+					}
+					else
+					{
+						counter = 0;
+					}
+				}
+				else
+				{
+					counter = 0;
+				}
+			}
+		}
+	}
+
+	return 0x0;
+}
+
 void vmm::free( uintptr_t addr )
 {
 	if(addr < this->addr_space_base || addr > this->addr_space_limit)
@@ -211,6 +286,38 @@ bool vmm::map( uintptr_t virt, uintptr_t phys, uint32_t flags, size_t n )
 		
 		virt += memory::page_size_byte;
 		phys += memory::page_size_byte;
+	}
+
+	return true;
+}
+
+bool vmm::umap( uintptr_t virt )
+{
+	if(virt < this->addr_space_base || virt > this->addr_space_limit)
+	{
+		return false;
+	}
+
+	//set_bit(this->bitmap[bitmap_px(virt)], bitmap_py(virt));
+
+	return this->cntxt->umap(virt);
+}
+
+bool vmm::umap( uintptr_t virt, size_t n )
+{
+	if(virt < this->addr_space_base || virt > this->addr_space_limit || (virt + memory::page_size_byte * n) > this->addr_space_limit)
+	{
+		return false;
+	}
+
+	while(n--)
+	{
+		if(!this->umap(virt))
+		{
+			return false;
+		}
+		
+		virt += memory::page_size_byte;
 	}
 
 	return true;
