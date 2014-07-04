@@ -4,6 +4,8 @@
 #include "include/thread.hpp"
 #include "include/scheduler.hpp"
 
+#include "include/elf.hpp"
+
 #include <cstring>
 
 cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
@@ -14,8 +16,10 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 
 	pmm &pmm = pmm::instance();
 
-	process *proc;
-	thread *thrd;
+	process *proc  = nullptr;
+	thread 	*thrd  = nullptr;
+
+	elf	*image = nullptr;
 
 	process::info_t	pinfo;
 	thread::info_t  tinfo;
@@ -27,7 +31,41 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 		break;
 
 		case syscall::spawn_elf:
+			image = new elf((uintptr_t)cpu->param1(), cpu->param2());
 
+			if(image && image->check())
+			{
+				if(scheduler.running && scheduler.running->proc)
+				{
+					proc = image->load_process((char*)cpu->param3(), (char*)cpu->param4(), (process::id_t)scheduler.running->proc->id);
+				}
+				else
+				{
+					proc = image->load_process((char*)cpu->param3(), (char*)cpu->param4(), 0);
+				}
+
+				if(proc)
+				{
+					procmgr.add(proc);
+
+					thrd = new thread(proc, image->entry(), cpu->param5());
+
+					thrdmgr.add(thrd);
+					scheduler.add(thrd);
+
+					cpu->param0() = proc->id;
+				}
+				else
+				{
+					cpu->param0() = -1;
+				}
+			}
+			else
+			{
+					cpu->param0() = -1;
+			}
+
+			delete image;
 		break;
 
 		case syscall::exit_proc:

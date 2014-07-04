@@ -294,7 +294,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 
 		if(app->check())
 		{
-			process *proc2 = app->load_process("proc2", "", 0);
+			process *proc2 = app->load_process("elf.app", "", 0);
 		
 			if(proc2)
 			{
