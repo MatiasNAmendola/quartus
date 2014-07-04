@@ -95,7 +95,7 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 		case syscall::create_thread:
 			proc = scheduler.running->proc;
 
-			thrd = new thread(proc, (uintptr_t)cpu->param1(), (size_t)cpu->param2());
+			thrd = new thread(proc, (uintptr_t)cpu->param1(), (uintptr_t)cpu->param2(), (size_t)cpu->param3());
 
 			if(thrd)
 			{
