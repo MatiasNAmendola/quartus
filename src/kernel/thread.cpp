@@ -56,6 +56,8 @@ thread::thread( process *proc, uintptr_t entry, size_t flags )
 	*/
 	#endif
 
+	this->state = thread::ready;
+
 	this->proc->thrds.push_back(this);
 }
 

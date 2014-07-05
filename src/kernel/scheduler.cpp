@@ -45,6 +45,13 @@ cpu::cpu_state *scheduler::schedule( cpu::cpu_state *cpu )
 
 	this->running = this->ready.pop_front();
 
+	while(this->running->state != kernel::thread::ready)
+	{
+		this->ready.push_back(this->running);
+
+		this->running = this->ready.pop_front();
+	}
+
 	if(this->running)
 	{
 		cpu = (*this->running).restore();

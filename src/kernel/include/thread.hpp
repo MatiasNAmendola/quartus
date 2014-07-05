@@ -34,7 +34,12 @@ namespace kernel
 				/**
 				  * @brief	Thread is running
 				  */
-				running,
+				running = 0,
+
+				/**
+				  * @brief	Thread is ready to run
+				  */
+				ready 	= 0,
 	
 				/**
 				  * @brief	Thread is sleeping, waiting for time
