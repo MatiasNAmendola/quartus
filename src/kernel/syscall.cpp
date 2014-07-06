@@ -140,7 +140,7 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 				scheduler.add(thrd);
 				thrdmgr.add(thrd);
 
-				cpu->param0() = 0;
+				cpu->param0() = thrd->id;
 			}
 			else
 			{
