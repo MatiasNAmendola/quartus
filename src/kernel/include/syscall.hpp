@@ -85,7 +85,12 @@ namespace kernel
 			/**
 			  * @brief	Number of the syscall gathering information about the memory
 			  */	
-			memory_info	= 0x22
+			memory_info	= 0x22,
+
+			/**
+			  * @brief	Number of the syscall getting the system time
+			  */
+			get_time	= 0xA1
 		};
 
 		/**

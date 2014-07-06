@@ -4,6 +4,8 @@
 #include "include/thread.hpp"
 #include "include/scheduler.hpp"
 
+#include "include/timer.hpp"
+
 #include "include/elf.hpp"
 
 #include <cstring>
@@ -205,15 +207,15 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 			}
 		break;
 
-		case sleep_thread:
+		case syscall::sleep_thread:
 
 		break;
 
-		case wake_thread:
+		case syscall::wake_thread:
 
 		break;
 
-		case thread_info:
+		case syscall::thread_info:
 			thrd = scheduler.running;
 
 			if(thrd && (thread::info_t*)cpu->param1() != nullptr)
@@ -234,7 +236,7 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 
 		
 
-		case memory_alloc:
+		case syscall::memory_alloc:
 			proc = scheduler.running->proc;
 
 			if(proc)
@@ -247,7 +249,7 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 			}
 		break;
 
-		case memory_free:
+		case syscall::memory_free:
 			proc = scheduler.running->proc;
 
 			if(proc)
@@ -260,7 +262,7 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 			}
 		break;
 
-		case memory_info:
+		case syscall::memory_info:
 			if((pmm::meminfo_t*)cpu->param1() != nullptr)
 			{
 				((pmm::meminfo_t*)(cpu->param1()))->free = pmm.info().free;
@@ -272,6 +274,10 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 			{
 				cpu->param0() = 0x0;
 			}
+		break;
+
+		case syscall::get_time:
+			cpu->param0() = timer::time;
 		break;
 	}
 
