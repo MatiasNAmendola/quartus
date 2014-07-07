@@ -284,23 +284,23 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	{
 		tar *inittar = new tar(mods[0].mod_start);
 
-		size_t size = inittar->size("elf.app");
+		size_t size = inittar->size("test.app");
 
 		char *buffer = new char[size];
 
-		inittar->read("elf.app", buffer, size);
+		inittar->read("test.app", buffer, size);
 
 		elf *app = new elf((uintptr_t)buffer, size);
 
 		if(app->check())
 		{
-			process *proc2 = app->load_process("elf.app", "", 0);
-		
-			if(proc2)
-			{
-				procmgr.add(proc2);
+			process *test = app->load_process("test.app", "", 0);
 
-				thread *thrd = new thread(proc2, app->entry(), thread::kernel);
+			if(test)
+			{
+				procmgr.add(test);
+
+				thread *thrd = new thread(test, app->entry(), thread::kernel);
 
 				thrdmgr.add(thrd);
 				scheduler.add(thrd);

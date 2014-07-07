@@ -34,8 +34,8 @@ namespace tools
 
 				inline bool operator != ( const iterator &it ) { return !(*this == it); }
 
-				inline T *operator * () { return this->itm->value; }
-				inline T *operator -> () { return this->itm->value; }
+				inline T *operator * () { if(this->itm) { return this->itm->value; } else { return nullptr; } }
+				inline T *operator -> () { if(this->itm) { return this->itm->value; } else { return nullptr; }  }
 
 				iterator(  ) { this->lst = nullptr; this->itm = nullptr; }
 				iterator( list *lst, item *imt ) { this->lst = lst; this->itm = itm; }

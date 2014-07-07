@@ -8,6 +8,8 @@
 
 #include "include/elf.hpp"
 
+#include "include/output.hpp"
+
 #include <cstring>
 
 cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
@@ -278,6 +280,13 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 
 		case syscall::get_time:
 			cpu->param0() = timer::time;
+		break;
+
+		/*
+		Syscall only used for testing
+		*/
+		case 0xB0:
+			kernel::kout << (char)cpu->param1();
 		break;
 	}
 
