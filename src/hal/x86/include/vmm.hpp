@@ -8,9 +8,9 @@
 #include "memory.hpp"
 #include "mapper.hpp"
 
-#define addr(x,y)		(uintptr_t)(( (x) * 32 + (y) ) * 4096)
-#define bitmap_px(addr)		((uintptr_t)addr / 4096 / 32)
-#define bitmap_py(addr)		((uintptr_t)addr / 4096 % 32)
+#define addr(x,y)		(uintptr_t)(( (x) * 32 + (y) ) * memory::page_size_byte)
+#define bitmap_px(addr)		((uintptr_t)addr / memory::page_size_byte / 32)
+#define bitmap_py(addr)		((uintptr_t)addr / memory::page_size_byte % 32)
 
 #define set_bit(bitmap,bit)	((bitmap) |= (1 << (bit)))
 #define clear_bit(bitmap,bit)	((bitmap) &= ~(1 << (bit)))

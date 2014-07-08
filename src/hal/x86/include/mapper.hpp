@@ -8,8 +8,8 @@
 #include "memory.hpp"
 #include "pmm.hpp"
 
-#define PD_INDEX( virt_addr )	virt_addr / 4096 / 1024							
-#define PT_INDEX( virt_addr )	virt_addr / 4096 % 1024
+#define PD_INDEX( virt_addr )	virt_addr / memory::page_size_byte / context::pagedir_size							
+#define PT_INDEX( virt_addr )	virt_addr / memory::page_size_byte % context::pagetab_size
 
 namespace hal
 {

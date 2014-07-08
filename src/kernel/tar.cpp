@@ -1,8 +1,6 @@
 #include "include/tar.hpp"
 #include "include/heap.hpp"
 
-#include "include/output.hpp"
-
 #include <number.hpp>
 #include <cstring>
 

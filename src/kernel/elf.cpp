@@ -1,8 +1,6 @@
 #include "include/elf.hpp"
 #include "include/memmgr.hpp"
 
-#include "include/output.hpp"
-
 #include "../hal/hal.hpp"
 
 #include <cstring>
