@@ -106,6 +106,7 @@ namespace hal
 				  * @brief	Makes a copy of the mapping from another context.
 				  *
 				  *		e.g. used for kernel-mappings
+				  *		start address and number of pages should be page table aligned
 				  *
 				  * @param	src		The context the copy is made of
 				  * @param	start		Address of the first mapping to copy

@@ -276,7 +276,6 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	intr::handler(0xFF, []( cpu::cpu_state *cpu ) { return syscall::handle(cpu); });
 	intr::handler(0xEE, []( cpu::cpu_state *cpu ) { kernel::scheduler &sched = kernel::scheduler::instance(); return sched.schedule(cpu); });
 
-
 	/*
 	Test TAR
 	*/
@@ -294,16 +293,19 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 
 		if(app->check())
 		{
-			process *test = app->load_process("test.app", "", 0);
-
-			if(test)
+			for(int i = 0; i < 5; i++)
 			{
-				procmgr.add(test);
+				process *test = app->load_process("test.app", "", 0);
 
-				thread *thrd = new thread(test, app->entry(), thread::kernel);
+				if(test)
+				{
+					procmgr.add(test);
 
-				thrdmgr.add(thrd);
-				scheduler.add(thrd);
+					thread *thrd = new thread(test, app->entry(), thread::kernel);
+
+					thrdmgr.add(thrd);
+					scheduler.add(thrd);
+				}
 			}
 		}
 

@@ -17,8 +17,8 @@ SECTIONS
 
 	.text : 
 	{
-		*(multiboot)
-		*(.text)
+		*(multiboot*)
+		*(.text*)
 	}
 
 	.data ALIGN(4096) : 
@@ -28,17 +28,17 @@ SECTIONS
 		KEEP(*(SORT_BY_INIT_PRIORITY( .init_array.* )));
 		end_ctors = .;
 
-		*(.data)
+		*(.data*)
 	}
 
 	.rodata ALIGN(4096) : 
 	{
-		*(.rodata)
+		*(.rodata*)
 	}
 
 	.bss ALIGN(4096) :
 	{
-		*(.bss)
+		*(.bss*)
     	}
 
 	. = ALIGN(4096);

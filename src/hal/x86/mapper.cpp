@@ -1,6 +1,8 @@
 #include "include/mapper.hpp"
 #include "include/memory.hpp"
 
+#include <cstring>
+
 using namespace hal::x86;
 
 bool mapper::paging_activated 		= false;
@@ -399,17 +401,26 @@ uint32_t context::flags( uintptr_t virt )
 
 bool context::copy( context &src, uintptr_t start, size_t n )
 {
-	uintptr_t vaddr = start;
+	pagedir_t *dpd = this->pagedir;
+	pagedir_t *spd = src.pagedir;
 
-	for(size_t i = 0; i < n; i++)
+	if(mapper::paging_activated)
 	{
-		if(!this->map(vaddr, src.phys(vaddr), src.flags(vaddr)))
-		{
-			return false;
-		}
+		mapper::current_context->map(context::tmp_pagedir_mapping, (uintptr_t)dpd, context::page_present | context::page_write);
+		mapper::current_context->map(context::tmp_pagetab_mapping, (uintptr_t)spd, context::page_present);
 
-		vaddr += 0x1000;
+		dpd = (pagedir_t*)(context::tmp_pagedir_mapping + PD_INDEX(start) * sizeof(pagedir_t));
+		spd = (pagedir_t*)(context::tmp_pagetab_mapping + PD_INDEX(start) * sizeof(pagedir_t));
+
+		memcpy(dpd, spd, (n + context::pagedir_size - 1) / context::pagedir_size * sizeof(pagedir_t));
 	}
+	else
+	{
+		dpd = (pagedir_t*)((uintptr_t)dpd + PD_INDEX(start) * sizeof(pagedir_t));
+		spd = (pagedir_t*)((uintptr_t)spd + PD_INDEX(start) * sizeof(pagedir_t));
 
+		memcpy(dpd, spd, (n + context::pagedir_size - 1) / context::pagedir_size * sizeof(pagedir_t));
+	}
+	
 	return true;
 }

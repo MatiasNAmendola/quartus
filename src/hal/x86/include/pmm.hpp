@@ -16,7 +16,7 @@
 #define bitmap_py(addr)		((uintptr_t)addr / 4096 % 32)
 
 #define set_bit(bitmap,bit)	((bitmap) |= (1 << (bit)))
-#define clear_bit(bitmap,bit)	((bitmap) ^= (1 << (bit)))
+#define clear_bit(bitmap,bit)	((bitmap) &= ~(1 << (bit)))
 
 namespace hal
 {
