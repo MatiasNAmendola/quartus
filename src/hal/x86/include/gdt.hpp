@@ -34,7 +34,7 @@ namespace hal
 				  */
 				struct tss_t
 				{
-					uint32_t	tss[tss_size];
+					uint32_t	tss[tss_size] = { 0, 0, 0x10 };
 				} PACKED;
 
 			private:

@@ -9,6 +9,11 @@
 
 namespace kernel
 {
+	namespace ipc
+	{
+		class service;
+	}
+
 	/**
 	  * @brief	A thread
 	  */
@@ -17,6 +22,8 @@ namespace kernel
 		friend class process;
 		friend class scheduler;
 		friend class threadmgr;
+
+		friend class ipc::service;
 
 		friend cpu::cpu_state *syscall::handle( cpu::cpu_state *cpu );
 

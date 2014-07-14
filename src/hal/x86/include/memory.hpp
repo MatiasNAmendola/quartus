@@ -6,6 +6,9 @@
 #include <cstdbool>
 
 #define align4k(addr)	((addr) & (~0xFFF))
+#define offset4k(addr)	((addr) & ( 0xFFF))
+
+#define isaligned(addr)	!(((uintptr_t)addr) % (memory::page_size_byte))
 
 #define bytes_to_pages(bytes)	(size_t)((bytes + memory::page_size_byte - 1) / memory::page_size_byte)
 

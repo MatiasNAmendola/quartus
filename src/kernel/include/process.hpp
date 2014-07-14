@@ -10,6 +10,11 @@
 namespace kernel
 {
 	class thread;
+	
+	namespace ipc
+	{
+		class service;
+	}
 
 	/**
 	  * @brief	A Process
@@ -19,6 +24,8 @@ namespace kernel
 		friend class thread;
 		friend class scheduler;
 		friend class processmgr;
+
+		friend class ipc::service;
 
 		friend class elf;
 

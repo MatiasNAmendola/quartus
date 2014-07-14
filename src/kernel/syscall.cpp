@@ -4,6 +4,8 @@
 #include "include/thread.hpp"
 #include "include/scheduler.hpp"
 
+#include "include/ipc.hpp"
+
 #include "include/timer.hpp"
 
 #include "include/elf.hpp"
@@ -14,14 +16,18 @@
 
 cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 {
-	processmgr &procmgr  = processmgr::instance();
-	threadmgr &thrdmgr   = threadmgr::instance();
-	scheduler &scheduler = scheduler::instance();
+	processmgr &procmgr  	 = processmgr::instance();
+	threadmgr &thrdmgr   	 = threadmgr::instance();
+	scheduler &scheduler 	 = scheduler::instance();
+
+	ipc::servicemgr &srvcmgr = ipc::servicemgr::instance();
 
 	pmm &pmm = pmm::instance();
 
 	process *proc  = nullptr;
 	thread 	*thrd  = nullptr;
+
+	ipc::service *srvc = nullptr;
 
 	elf	*image = nullptr;
 
@@ -275,6 +281,77 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 			else
 			{
 				cpu->param0() = 0x0;
+			}
+		break;
+
+		case syscall::ipc_setup:
+			srvc = new ipc::service((char*)cpu->param1(), scheduler.running->proc, cpu->param2(), cpu->param3(), cpu->param4());
+
+			if(srvc)
+			{
+				srvcmgr.add(srvc);
+
+				cpu->param0() = 0;
+			}
+			else
+			{
+				cpu->param0() = 1;
+			}
+		break;
+
+		case syscall::ipc_destroy:
+			srvc = srvcmgr.get((char*)cpu->param1());
+
+			if(srvc && srvc->proc == scheduler.running->proc)
+			{
+				srvcmgr.remove(srvc);
+
+				delete srvc;
+
+				cpu->param0() = 0;
+			}
+			else
+			{
+				cpu->param0() = 1;
+			}
+		break;
+
+		case syscall::ipc_fetch:
+			srvc = srvcmgr.get((char*)cpu->param1());
+
+			if(srvc && srvc->proc == scheduler.running->proc)
+			{
+				cpu->param0() = srvc->fetch((kernel::ipc::message_t*)cpu->param2());
+			}
+			else
+			{
+				cpu->param0() = 0;
+			}
+		break;
+
+		case syscall::ipc_finish:
+			srvc = srvcmgr.get((char*)cpu->param1());
+
+			if(srvc && srvc->proc == scheduler.running->proc)
+			{
+				srvc->finish((kernel::ipc::message_t*)cpu->param2());
+
+				cpu = scheduler.schedule(cpu);
+			}
+		break;
+
+		case syscall::ipc_do:
+			srvc = srvcmgr.get((char*)cpu->param1());
+
+			if(srvc)
+			{
+				cpu->param0() = srvc->_do_(scheduler.running, (ipc::message_t*)cpu->param2());
+
+				cpu = scheduler.schedule(cpu);
+			}
+			else
+			{
+				cpu->param0() = kernel::ipc::notfound;
 			}
 		break;
 

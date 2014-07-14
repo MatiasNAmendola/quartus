@@ -15,6 +15,8 @@
 #define set_bit(bitmap,bit)	((bitmap) |= (1 << (bit)))
 #define clear_bit(bitmap,bit)	((bitmap) &= ~(1 << (bit)))
 
+#define is_kernel_space(addr)	(((uintptr_t)addr) >= vmm::kernel_space_base && ((uintptr_t)addr) <= vmm::kernel_space_limit)
+#define is_user_space(addr)	(((uintptr_t)addr) >= vmm::user_space_base   && ((uintptr_t)addr) <= vmm::user_space_limit)
 
 namespace hal
 {

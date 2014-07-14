@@ -88,6 +88,31 @@ namespace kernel
 			memory_info	= 0x22,
 
 			/**
+			  * @brief	Number of the syscall setting up a rpc service
+			  */
+			ipc_setup	= 0x30,
+
+			/**
+			  * @brief	Number of the syscall destroying up a rpc service
+			  */
+			ipc_destroy	= 0x31,
+
+			/**
+			  * @brief	Number of the syscall fetching a rpc request from the services message queue
+			  */
+			ipc_fetch	= 0x32,
+
+			/**
+			  * @brief	Number of the syscall finishing up a rpc request
+			  */
+			ipc_finish	= 0x33,
+
+			/**
+			  * @brief	Number of the syscall doing up a rpc request
+			  */
+			ipc_do		= 0x34,
+
+			/**
 			  * @brief	Number of the syscall getting the system time
 			  */
 			get_time	= 0xA1

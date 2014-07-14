@@ -12,6 +12,8 @@ includes from 'kernel'
 #include "include/thread.hpp"
 #include "include/scheduler.hpp"
 
+#include "include/ipc.hpp"
+
 #include "include/syscall.hpp"
 
 #include "include/tar.hpp"
@@ -222,7 +224,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	/*
 	Spawn first process
 	*/
-	process *proc0 = new process("proc0", "", 0, &kernel_context);
+	/*process *proc0 = new process("proc0", "", 0, &kernel_context);
 
 	procmgr.add(proc0);
 
@@ -242,13 +244,13 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	thrdmgr.add(thrd01);
 	thrdmgr.add(thrd02);
 	thrdmgr.add(thrd03);
-	thrdmgr.add(thrd04);
+	thrdmgr.add(thrd04);*/
 	
 
 	/*
 	Spawn new process
 	*/
-	process *proc1 = new process("proc1", "", 0, &kernel_context);
+	/*process *proc1 = new process("proc1", "", 0, &kernel_context);
 
 	procmgr.add(proc1);
 
@@ -268,7 +270,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	thrdmgr.add(thrd11);
 	thrdmgr.add(thrd12);
 	thrdmgr.add(thrd13);
-	thrdmgr.add(thrd14);
+	thrdmgr.add(thrd14);*/
 
 	/*
 	Initialise the syscall interface
@@ -293,7 +295,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 
 		if(app->check())
 		{
-			for(int i = 0; i < 5; i++)
+			for(int i = 0; i < 1; i++)
 			{
 				process *test = app->load_process("test.app", "", 0);
 
@@ -301,7 +303,7 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 				{
 					procmgr.add(test);
 
-					thread *thrd = new thread(test, app->entry(), thread::kernel);
+					thread *thrd = new thread(test, app->entry(), thread::user);
 
 					thrdmgr.add(thrd);
 					scheduler.add(thrd);
@@ -309,6 +311,36 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 			}
 		}
 
+		delete app;
+		delete buffer;
+
+
+		size = inittar->size("srvc.app");
+
+		buffer = new char[size];
+
+		inittar->read("srvc.app", buffer, size);
+
+		app = new elf((uintptr_t)buffer, size);
+
+		if(app->check())
+		{
+			for(int i = 0; i < 1; i++)
+			{
+				process *test = app->load_process("srvc.app", "", 0);
+
+				if(test)
+				{
+					procmgr.add(test);
+
+					thread *thrd = new thread(test, app->entry(), thread::user);
+
+					thrdmgr.add(thrd);
+					scheduler.add(thrd);
+				}
+			}
+		}
+	
 		delete app;
 		delete buffer;
 		delete inittar;
