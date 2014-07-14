@@ -166,7 +166,12 @@ namespace kernel
 			/**
 			  * @brief	Flags of the thread
 			  */
-			size_t			flags;		
+			size_t			flags;	
+
+			/**
+			  * @brief	Timer used for sleeping
+			  */
+			time_t			sleep;	
 
 			/**
 			  * @brief	The cpu-state of the thread

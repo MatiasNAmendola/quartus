@@ -93,6 +93,7 @@ void service::finish( kernel::ipc::message_t *message )
 	
 		
 	threadmgr  &thrdmgr   = threadmgr::instance(); 
+	scheduler  &scheduler = scheduler::instance();
 
 	thread *sender = thrdmgr.get(message->sender);
 
@@ -102,9 +103,9 @@ void service::finish( kernel::ipc::message_t *message )
 	sender->cpu->param0() = message->error;
 
 	/*
-	Set sender state to ready
+	Unblock the sender thread
 	*/
-	sender->state = thread::ready;
+	scheduler.unblock(sender);
 }
 
 int service::_do_( kernel::thread *sender, kernel::ipc::message_t *message )
@@ -163,13 +164,14 @@ int service::_do_( kernel::thread *sender, kernel::ipc::message_t *message )
 	
 	this->message_queue.push_back(new_message);
 
+	scheduler  &scheduler = scheduler::instance();
+
 	/*
 	Create popup thread handling the ipc request (if supported by service)
 	*/
 	if(this->entry && this->running_threads < this->max_threads)
 	{
 		threadmgr  &thrdmgr   = threadmgr::instance(); 
-		scheduler  &scheduler = scheduler::instance();
 
 		thread *popup = new thread(this->proc, this->entry, thread::kernel);
 
@@ -183,9 +185,9 @@ int service::_do_( kernel::thread *sender, kernel::ipc::message_t *message )
 	}
 
 	/*
-	Set sender state to waiting
+	Block the sender thread
 	*/
-	sender->state = thread::waiting;
+	scheduler.block(sender);
 
 	return 0;
 }

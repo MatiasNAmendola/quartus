@@ -1,6 +1,8 @@
 #include "include/scheduler.hpp"
 #include "include/memmgr.hpp"
 
+#include "include/output.hpp"
+
 using kernel::scheduler;
 
 scheduler::scheduler(  ) : running(nullptr), cntxt(nullptr)
@@ -10,16 +12,52 @@ scheduler::scheduler(  ) : running(nullptr), cntxt(nullptr)
 
 void scheduler::add( kernel::thread *thrd )
 {
-	this->ready.push_back(thrd);
+	if(thrd)
+	{
+		this->ready.push_back(thrd);
+	}
 }
 
 void scheduler::remove( kernel::thread *thrd )
 {
-	for(tools::list<thread>::iterator it = this->ready.begin(); it != this->ready.end(); it++)
+	if(thrd)
 	{
-		if(*it == thrd)
+		for(tools::list<thread>::iterator it = this->ready.begin(); it != this->ready.end(); it++)
 		{
-			this->ready.erase(it);	
+			if(*it == thrd)
+			{			
+				this->ready.erase(it);	
+			}
+		}
+	}
+}
+
+void scheduler::block( kernel::thread *thrd )
+{
+	if(thrd)
+	{
+		(*thrd).state = kernel::thread::waiting;
+
+		this->remove(thrd);
+		
+		this->waiting.push_back(thrd);
+	}
+}
+
+void scheduler::unblock( kernel::thread *thrd )
+{
+	if(thrd)
+	{
+		(*thrd).state = kernel::thread::ready;
+	
+		this->ready.push_back(thrd);
+
+		for(tools::list<thread>::iterator it = this->waiting.begin(); it != this->waiting.end(); it++)
+		{
+			if(*it == thrd)
+			{
+				this->waiting.erase(it);
+			}
 		}
 	}
 }
@@ -40,14 +78,48 @@ cpu::cpu_state *scheduler::schedule( cpu::cpu_state *cpu )
 	{
 		(*this->running).save(cpu);
 
-		this->ready.push_back(this->running);
+		switch(this->running->state)
+		{
+			case kernel::thread::ready:
+				this->ready.push_back(this->running);
+			break;
+
+			case kernel::thread::waiting:
+				this->waiting.push_back(this->running);
+			break;
+
+			case kernel::thread::sleeping:
+			
+			break;
+
+			default:
+				this->ready.push_back(this->running);
+			break;			
+		}
 	}
 
 	this->running = this->ready.pop_front();
 
 	while(this->running->state != kernel::thread::ready)
 	{
-		this->ready.push_back(this->running);
+		switch(this->running->state)
+		{
+			case kernel::thread::ready:
+				this->ready.push_back(this->running);
+			break;
+
+			case kernel::thread::waiting:
+				this->waiting.push_back(this->running);
+			break;
+
+			case kernel::thread::sleeping:
+			
+			break;
+
+			default:
+				this->ready.push_back(this->running);
+			break;			
+		}
 
 		this->running = this->ready.pop_front();
 	}

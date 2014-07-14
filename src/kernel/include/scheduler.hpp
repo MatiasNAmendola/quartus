@@ -35,6 +35,20 @@ namespace kernel
 			void remove( thread *thrd );
 
 			/**
+			  * @brief	Removes an thread from the schedulers ready queue and put it into the waiting queue
+			  *
+			  * @param	thrd		Thread to be blocked
+			  */
+			void block( thread *thrd );
+
+			/**
+			  * @brief	Removes an thread from the schedulers waiting queue and put it into the ready queue
+			  *
+			  * @param	thrd		Thread to be unblocked
+			  */
+			void unblock( thread *thrd );
+
+			/**
 			  * @brief	Performs a thread-switch
 			  *
 			  *		Saves the state of the currently executed thread and switches to the next thread
@@ -49,6 +63,11 @@ namespace kernel
 			  * @brief	The schedulers ready queue; contains all thread ready for execution
 			  */
 			tools::list<thread>		ready;
+
+			/**
+			  * @brief	The schedulers waiting queue; contains all thread waiting for a specific event
+			  */
+			tools::list<thread>		waiting;
 
 			/**
 			  * @brief	The currently executed thread
