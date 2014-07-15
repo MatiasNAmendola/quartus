@@ -216,7 +216,16 @@ cpu::cpu_state *kernel::syscall::handle( cpu::cpu_state *cpu )
 		break;
 
 		case syscall::sleep_thread:
+			thrd = scheduler.running;
 
+			if(thrd)
+			{
+				scheduler.sleep(thrd, cpu->param1());
+
+				cpu->param0() = cpu->param1();
+
+				cpu = scheduler.schedule(cpu);
+			}
 		break;
 
 		case syscall::wake_thread:

@@ -45,8 +45,8 @@ namespace tools
 
 			~list(  );
 
-			inline T *front(  ){ return this->first->value; }
-			inline T *back(  ){ return this->last->value; }
+			inline T *front(  ){ if(!this->first) { return nullptr; } return this->first->value; }
+			inline T *back(  ){ if(!this->last) { return nullptr; } return this->last->value; }
 
 			iterator begin(  );
 			iterator end(  );

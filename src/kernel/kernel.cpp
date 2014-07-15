@@ -245,7 +245,6 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 	thrdmgr.add(thrd02);
 	thrdmgr.add(thrd03);
 	thrdmgr.add(thrd04);*/
-	
 
 	/*
 	Spawn new process
@@ -307,6 +306,8 @@ void init( multiboot::info *mbs, uint32_t mb_magic )
 
 					thrdmgr.add(thrd);
 					scheduler.add(thrd);
+
+					scheduler.sleep(thrd, 10);
 				}
 			}
 		}

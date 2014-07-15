@@ -5,6 +5,7 @@
 #include <definitions.hpp>
 
 #include "thread.hpp"
+#include "timer.hpp"
 
 #include "syscall.hpp"
 
@@ -49,6 +50,21 @@ namespace kernel
 			void unblock( thread *thrd );
 
 			/**
+			  * @brief	Removes an thread from the schedulers ready queue and put it into the sleeping queue
+			  *
+			  * @param	thrd		Thread to be blocked for a given time
+			  * @param	msec		Milliseconds to sleep
+			  */
+			void sleep( thread *thrd, time_t msec );
+
+			/**
+			  * @brief	Removes an thread from the schedulers sleeping queue and put it into the ready queue
+			  *
+			  * @param	thrd		Thread to be waked
+			  */
+			void wake( thread *thrd );
+
+			/**
 			  * @brief	Performs a thread-switch
 			  *
 			  *		Saves the state of the currently executed thread and switches to the next thread
@@ -68,6 +84,12 @@ namespace kernel
 			  * @brief	The schedulers waiting queue; contains all thread waiting for a specific event
 			  */
 			tools::list<thread>		waiting;
+
+			/**
+			  * @brief	The schedulers sleeping queue; contains all thread sleeping
+			  */
+			tools::list<thread>		sleeping;
+
 
 			/**
 			  * @brief	The currently executed thread

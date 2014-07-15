@@ -62,11 +62,86 @@ void scheduler::unblock( kernel::thread *thrd )
 	}
 }
 
+void scheduler::sleep( kernel::thread *thrd, time_t msec )
+{
+	if(thrd)
+	{
+		(*thrd).state = kernel::thread::sleeping;
+	
+		this->remove(thrd);
+
+		if(this->sleeping.empty())
+		{
+			(*thrd).sleep = msec;
+
+			this->sleeping.push_front(thrd);
+		}
+		else
+		{
+			time_t sleep = 0;
+
+			for(tools::list<thread>::iterator it = this->sleeping.begin(); it != this->sleeping.end(); it++)
+			{
+				sleep += (**it).sleep;
+
+				if(sleep >= msec)
+				{
+					sleep -= (**it).sleep;
+
+					(*thrd).sleep = msec - sleep;
+
+					(**it).sleep -= (*thrd).sleep;
+			
+					this->sleeping.insert(it, thrd);
+
+					return;
+				}
+			}
+
+			(*thrd).sleep = msec - sleep;
+
+			this->sleeping.push_back(thrd);
+		}
+	}
+}
+
+void scheduler::wake( kernel::thread *thrd )
+{
+	if(thrd)
+	{
+		(*thrd).state = kernel::thread::ready;
+	
+		this->ready.push_back(thrd);
+
+		for(tools::list<thread>::iterator it = this->sleeping.begin(); it != this->sleeping.end(); it++)
+		{
+			if(*it == thrd)
+			{
+				this->sleeping.erase(it);
+			}
+		}
+	}
+}
+
 cpu::cpu_state *scheduler::schedule( cpu::cpu_state *cpu )
 {
 	if(!cpu)
 	{
 		return nullptr;
+	}
+
+	if(this->sleeping.front())
+	{
+		kernel::thread *thrd = this->sleeping.front();
+
+		(*thrd).sleep -= 1000 / timer::freq;
+
+		while(thrd && (*thrd).sleep <= 0)
+		{
+			this->wake(thrd);
+
+			thrd = this->sleeping.front();
+		}
 	}
 
 	if(!this->ready.front())
@@ -89,7 +164,7 @@ cpu::cpu_state *scheduler::schedule( cpu::cpu_state *cpu )
 			break;
 
 			case kernel::thread::sleeping:
-			
+
 			break;
 
 			default:
@@ -100,7 +175,7 @@ cpu::cpu_state *scheduler::schedule( cpu::cpu_state *cpu )
 
 	this->running = this->ready.pop_front();
 
-	while(this->running->state != kernel::thread::ready)
+	while(this->running && this->running->state != kernel::thread::ready)
 	{
 		switch(this->running->state)
 		{
